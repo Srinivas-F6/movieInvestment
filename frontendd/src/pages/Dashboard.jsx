@@ -36,7 +36,7 @@ const Dashboard = () => {
   const [slotPrice, setSlotPrice] = useState('');
   const [cast, setCast] = useState('');
   const [crew, setCrew] = useState('');
-  const [images, setImages] = useState([]);
+  const [image, setImage] = useState(null);
 
   // ================= API =================
 
@@ -83,6 +83,8 @@ const Dashboard = () => {
 
         slotPrice: parseFloat(slotPrice),
 
+        
+
 
         cast: cast
           .split(',')
@@ -105,9 +107,7 @@ const Dashboard = () => {
         )
       );
 
-      images.forEach((image) => {
-        formData.append('images', image);
-      });
+      formData.append("image", image);
 
       await createMovie({
 
@@ -125,7 +125,7 @@ const Dashboard = () => {
       setSlotPrice('');
       setCast('');
       setCrew('');
-      setImages([]);
+      setImage(null);
 
     } catch (err) {
 
@@ -136,6 +136,39 @@ const Dashboard = () => {
 
       alert('Failed to create movie.');
     }
+  };
+
+  // ================ HandleImageChange =================
+  const handleImageChange = (e) => {
+
+    const file = e.target.files[0];
+    console.log(file.size);
+
+    if (!file) return;
+
+    // FILE SIZE CHECK (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+
+      alert("Image size must be less than 5MB");
+
+      return;
+    }
+
+    // FILE TYPE CHECK
+    const validTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ];
+
+    if (!validTypes.includes(file.type)) {
+
+      alert("Only JPG, PNG, WEBP images allowed");
+
+      return;
+    }
+
+    setImage(file);
   };
 
   return (
@@ -201,21 +234,20 @@ const Dashboard = () => {
               {/* MOVIE IMAGES */}
 
               <div>
-
                 <label className="mb-2 block text-sm font-medium text-zinc-300">
-                  Movie Images
+                  Movie Poster
                 </label>
 
                 <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={(e) =>
-                    setImages(Array.from(e.target.files))
-                  }
+                  type="file"  // 1170 X 870
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleImageChange}
                   className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white"
                 />
 
+                <p className="mt-2 text-xs text-zinc-500">
+                  Max size: 5MB • JPG, PNG, WEBP
+                </p>
               </div>
 
               {/* SLOT PRICE  */}
@@ -240,7 +272,7 @@ const Dashboard = () => {
               {/* CAST */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-zinc-300">
-                  Cast (comma separated)
+                  Cast
                 </label>
 
                 <input
@@ -258,7 +290,7 @@ const Dashboard = () => {
               <div>
 
                 <label className="mb-2 block text-sm font-medium text-zinc-300">
-                  Crew (comma separated)
+                  Crew
                 </label>
 
                 <input
@@ -278,7 +310,7 @@ const Dashboard = () => {
               <div>
 
                 <label className="mb-2 block text-sm font-medium text-zinc-300">
-                  Target Funding ($)
+                  Target Funding (₹)
                 </label>
 
                 <input
@@ -385,12 +417,12 @@ const Dashboard = () => {
                       <div className="flex flex-wrap gap-3">
                         {/* stats */}
                         <div className="rounded-lg bg-red-500/10 px-4 py-2 text-red-400">
-                          Target: $
+                          Target: ₹
                           {movie.targetFunding}
                         </div>
 
                         <div className="rounded-lg bg-blue-500/10 px-4 py-2 text-blue-400">
-                          Raised: $
+                          Raised: ₹
                           {movie.currentFunding}
                         </div>
                         <div className="rounded-lg bg-yellow-500/10 px-4 py-2 text-yellow-400">
@@ -402,6 +434,35 @@ const Dashboard = () => {
                       <div className="flex justify-end gap-3">
 
                         <button
+                          onClick={() => {
+
+                            if (movie.status === 'APPROVED') {
+
+                              navigate(`/movies/${movie.id}/create-stage`);
+
+                            } else if (movie.status === 'PENDING') {
+
+                              alert(
+                                'Movie is still pending admin approval.'
+                              );
+
+                            } else if (movie.status === 'REJECTED') {
+                              alert(
+                                'Movie was rejected by admin.'
+                              );
+                            } else {
+                              alert(
+                                `Cannot create stage when movie status is ${movie.status}`
+                              );
+
+                            }
+                          }}
+                          className="rounded-xl bg-purple-600 px-4 py-2 font-semibold text-white transition hover:bg-purple-700"
+                        >
+                          + Create Stage
+                        </button>
+
+                        <button
                           onClick={() =>
                             navigate(`/movie/stageDetails/${movie.id}`)
                           }
@@ -410,13 +471,14 @@ const Dashboard = () => {
                           stage details
                         </button>
 
+
                         <button
                           onClick={() =>
-                            navigate(`/movies/${movie.id}/create-stage`)
+                            navigate(`/movie/investorDetails/${movie.id}`)
                           }
                           className="rounded-xl bg-purple-600 px-4 py-2 font-semibold text-white hover:bg-purple-700"
                         >
-                          + Create Stage
+                          Investors
                         </button>
 
                       </div>
@@ -524,7 +586,7 @@ const Dashboard = () => {
 
                                 Invested:
                                 {" "}
-                                ${investment.amount}
+                                ₹{investment.amount}
 
                               </div>
 
@@ -552,7 +614,7 @@ const Dashboard = () => {
 
                               {new Date(
                                 investment.investedAt
-                              ).toLocaleDateString()}
+                              ).toLocaleDateString("en-IN")}
 
                             </p>
 

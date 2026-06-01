@@ -1,5 +1,6 @@
 package com.movie.platform.service;
 
+import com.movie.platform.dto.InvestorsResponse;
 import com.movie.platform.model.*;
 import com.movie.platform.repository.InvestmentRepository;
 import com.movie.platform.repository.InvestmentStageRepository;
@@ -30,69 +31,24 @@ public class InvestmentService {
     @Autowired
     private UserRepository userRepository;
     
-    // INVEST IN MOVIE
-//    public Investment invest(
-//            Long movieId,
-//            Long userId,
-//            Integer slotsToBuy
-//    ) {
-//
-//        Movie movie = movieRepository.findById(movieId)
-//                .orElseThrow(() ->
-//                        new RuntimeException("Movie not found"));
-//
-//        User investor = userRepository.findById(userId)
-//                .orElseThrow(() ->
-//                        new RuntimeException("User not found"));
-//
-//        // VALIDATE AVAILABLE SLOTS
-//        if (movie.getAvailableSlots() < slotsToBuy) {
-//            throw new RuntimeException("Not enough slots available");
-//        }
-//
-//        // CALCULATE AMOUNT
-//        BigDecimal amount =
-//                movie.getSlotPrice()
-//                        .multiply(BigDecimal.valueOf(slotsToBuy));
-//
-//        // CREATE INVESTMENT
-//        Investment investment = new Investment();
-//
-//        investment.setInvestor(investor);
-//
-//        investment.setMovie(movie);
-//
-//        investment.setSlotsToBuy(slotsToBuy);
-//
-//        investment.setSlotPrice(movie.getSlotPrice());
-//
-//        investment.setAmount(amount);
-//
-//        // UPDATE MOVIE
-//        movie.setCurrentFunding(
-//                movie.getCurrentFunding().add(amount)
-//        );
-//
-//        movie.setAvailableSlots(
-//                movie.getAvailableSlots() - slotsToBuy
-//        );
-//
-//        // FUNDING COMPLETED
-//        if (movie.getCurrentFunding()
-//                .compareTo(movie.getTargetFunding()) >= 0) {
-//
-//            movie.setStatus(Movie.MovieStatus.FUNDING_COMPLETED);
-//        }
-//
-//        movieRepository.save(movie);
-//
-//        return investmentRepository.save(investment);
-//    }
 
     // GET INVESTMENTS BY MOVIE
-    public List<Investment> getInvestmentsByMovie(Long movieId) {
+    public List<InvestorsResponse> getInvestmentsByMovie(Long movieId) {
 
-        return investmentRepository.findByMovieId(movieId);
+        List<Investment> investments =
+                investmentRepository.findByMovieId(movieId);
+
+        return investments.stream()
+                .map(investment -> new InvestorsResponse(
+                        investment.getId(),
+                        investment.getInvestor().getId(),
+                        investment.getInvestor().getName(),
+                        investment.getInvestor().getEmail(),
+                        investment.getSlotsToBuy(),
+                        investment.getAmount(),
+                        investment.getStage()
+                ))
+                .toList();
     }
 
     // GET INVESTMENTS BY USER
@@ -137,6 +93,13 @@ public class InvestmentService {
         InvestmentStage stage = investmentStageRepository.findById(stageId)
                 .orElseThrow(() -> new RuntimeException("Stage not found"));
         
+        if (stage.getStatus() != InvestmentStage.StageStatus.ACTIVE) {
+            throw new RuntimeException(
+                    "Investments are allowed only for ACTIVE stages"
+            );
+        }
+        
+        
         User investor = userRepository.findById(userId)
               .orElseThrow(() ->
                       new RuntimeException("User not found"));
@@ -175,7 +138,7 @@ public class InvestmentService {
 
         investment.setAmount(amount);
         
-        movie.setCurrentFunding(amount);
+        movie.setCurrentFunding(movie.getCurrentFunding().add(amount));
 
         investment.setSlotsToBuy(slotsToBuy);
 

@@ -13,6 +13,7 @@ const Home = () => {
     isError,
   } = useGetMoviesQuery();
 
+  const visibleMovies = movies?.filter((movie) => !movie.hidden);
 
 
   // ================= LOADING =================
@@ -68,79 +69,79 @@ const Home = () => {
 
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
 
-        {movies &&
-          movies.map((movie) => {
+        {visibleMovies?.map((movie) => {
 
-            const stage = movie.stages?.[0];
+          const stage = movie.stages?.[0];
 
-            const currentFunding =
-              Number(movie.currentFunding);
+          const currentFunding =
+            Number(movie.currentFunding);
 
-            const targetFunding =
-              Number(movie.targetFunding);
+          const targetFunding =
+            Number(movie.targetFunding);
 
-            const progress =
-              targetFunding > 0
-                ? (currentFunding / targetFunding) * 100
-                : 0;
+          const progress =
+            targetFunding > 0
+              ? (currentFunding / targetFunding) * 100
+              : 0;
 
-            return (
+          return (
 
-              <div
-                key={movie.id}
-                className="group overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900 shadow-lg transition duration-300 hover:-translate-y-2 hover:border-red-500/50"
-              >
+            <div
+              key={movie.id}
+              className="group overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900 shadow-lg transition duration-300 hover:-translate-y-2 hover:border-red-500/50"
+            >
 
-                {/* IMAGE */}
+              {/* IMAGE */}
 
-                <div className="relative overflow-hidden">
-                  <img
-                    src={
-                      movie.images?.length > 0
-                        ? `http://localhost:8080${movie.images[0].imageUrl}`
-                        : 'https://via.placeholder.com/400x300'
+              <div className="h-64 relative overflow-hidden">
+                <img
+                  src={
+                    movie.imageUrl
+                      ? `${import.meta.env.VITE_API_URL}${movie.imageUrl}`
+                      : "/icons.svg"
+                  }
+                  alt={movie.title}
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-100"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+
+                <span className="absolute bottom-4 left-4 rounded-full bg-red-600 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                  {movie.status}
+                </span>
+
+              </div>
+
+              {/* CONTENT */}
+
+              <div className="p-6">
+
+                <h2 className="mb-3 text-2xl font-bold text-white">
+                  {movie.title}
+                </h2>
+                <h2 className="mb-3 text-1xl  text-white">
+                  {movie.slotPrice ? `₹${movie.slotPrice} per slot` : 'No slot price available'}
+                </h2>
+
+                {/* BUTTON */}
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() =>
+                      navigate(`/movie/${movie.id}`)
                     }
-                    alt={movie.title}
-                    className="h-56 w-full bg-blend-hard-light object-contain transition duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-
-                  <span className="absolute bottom-4 left-4 rounded-full bg-red-600 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
-                    {movie.status}
-                  </span>
-
-                </div>
-
-                {/* CONTENT */}
-
-                <div className="p-6">
-
-                  <h2 className="mb-3 text-2xl font-bold text-white">
-                    {movie.title}
-                  </h2>
-                  <h2 className="mb-3 text-1xl  text-white">
-                    {movie.slotPrice ? `$${movie.slotPrice} per slot` : 'No slot price available'}
-                  </h2>
-
-                  {/* BUTTON */}
-
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() =>
-                        navigate(`/movie/${movie.id}`)
-                      }
-                      className="flex-1 rounded-xl border border-zinc-700 bg-red-500 px-4 py-3 font-semibold text-white transition hover:bg-red-700"
-                    >
-                      Movie Details
-                    </button>
-
-                  </div>
+                    className="flex-1 rounded-xl border border-zinc-700 bg-red-500 px-4 py-3 font-semibold text-white transition hover:bg-red-700"
+                  >
+                    Movie Details
+                  </button>
 
                 </div>
 
               </div>
-            );
-          })}
+
+            </div>
+          );
+        })}
       </div>
 
     </div>

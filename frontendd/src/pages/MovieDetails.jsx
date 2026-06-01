@@ -58,15 +58,11 @@ export function MovieDetails() {
         );
     }
 
-    // const progress = (movie.currentFunding / movie.targetFunding) * 100;
-
     return (
 
         <div className="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black text-white">
 
             <div className="mx-auto max-w-7xl px-4 py-10">
-
-                {/* BACK BUTTON */}
 
                 {/* BACK BUTTON */}
 
@@ -93,73 +89,88 @@ export function MovieDetails() {
 
                         {/* TOP HEADER */}
 
-                        <div className="border-b border-zinc-800 pb-6">
+                        <div className="rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-900 to-black p-10 shadow-2xl">
 
-                            <span className="rounded-full bg-red-600 px-4 py-1 text-xs font-bold uppercase tracking-wider text-white">
-                                {movie.status}
-                            </span>
+                            <div className="flex flex-wrap items-center gap-4">
 
-                            <h1 className="mt-4 text-4xl font-extrabold leading-tight lg:text-5xl">
-                                {movie.title}
-                            </h1>
+                                <h1 className="text-5xl font-black">
+                                    {movie.title}
+                                </h1>
 
-                            <p className="mt-5 text-sm leading-7 text-zinc-400 lg:text-base">
+                                <span className={`rounded-full px-4 py-1 text-xs font-bold uppercase
+                            ${movie.status === 'APPROVED'
+                                        ? 'bg-green-500/20 text-green-400'
+                                        : movie.status === 'REJECTED'
+                                            ? 'bg-red-500/20 text-red-400'
+                                            : 'bg-yellow-500/20 text-yellow-400'
+                                    }`}
+                                >
+                                    {movie.status}
+                                </span>
+
+                            </div>
+
+                            <p className="mt-6 text-zinc-300">
                                 {movie.description}
                             </p>
+
+                            <h2 className="mt-6 text-3xl font-bold text-red-400">
+                                ₹{movie.slotPrice} / slot
+                            </h2>
 
                         </div>
 
                         {/* CAST + CREW */}
 
-                        <div className="mt-8 rounded-2xl border border-zinc-800 bg-black/30 p-5">
+                        <div className="mt-8 grid gap-6 md:grid-cols-2">
 
                             {/* CAST */}
 
-                            <div className="rounded-2xl border border-zinc-800 bg-black/30 p-5">
+                            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
 
-                                <h2 className="mb-4 text-lg font-bold text-white">
-                                    Cast
+                                <h2 className="mb-4 text-xl font-bold text-white">
+                                    🎭 Cast
                                 </h2>
 
-                                <div className="flex flex-wrap gap-2">
+                                <ul className="space-y-3">
 
                                     {movie.cast?.map((actor, index) => (
 
-                                        <span
+                                        <li
                                             key={index}
-                                            className="rounded-full border border-zinc-700 bg-zinc-800/70 px-3 py-1.5 text-xs font-medium text-zinc-300 transition hover:border-red-500 hover:text-white"
+                                            className="border-b border-zinc-800 pb-2 text-zinc-300"
                                         >
                                             {actor}
-                                        </span>
+                                        </li>
 
                                     ))}
 
-                                </div>
+                                </ul>
 
                             </div>
 
                             {/* CREW */}
 
-                            <div className="mt-8 rounded-2xl border border-zinc-800 bg-black/30 p-5">
+                            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
 
-                                <h2 className="mb-4 text-lg font-bold text-white">
-                                    Crew
+                                <h2 className="mb-4 text-xl font-bold text-white">
+                                    🎬 Crew
                                 </h2>
 
-                                <div className="flex flex-wrap gap-2">
+                                <ul className="space-y-3">
 
                                     {movie.crew?.map((member, index) => (
 
-                                        <span
+                                        <li
                                             key={index}
-                                            className="rounded-full border border-zinc-700 bg-zinc-800/70 px-3 py-1.5 text-xs font-medium text-zinc-300 transition hover:border-red-500 hover:text-white"
+                                            className="border-b border-zinc-800 pb-2 text-zinc-300"
                                         >
                                             {member}
-                                        </span>
+                                        </li>
 
                                     ))}
 
-                                </div>
+                                </ul>
 
                             </div>
 
@@ -221,7 +232,7 @@ export function MovieDetails() {
                                                 <th className="px-5 py-4 font-semibold">
                                                     Investment
                                                 </th>
-                                                
+
 
                                             </tr>
 
@@ -266,19 +277,21 @@ export function MovieDetails() {
                                                     <td className="px-5 py-4">
 
                                                         <button
-                                                            disabled={stage.status === "COMPLETED"}
+                                                            disabled={stage.status === "COMPLETED" || stage.status === "HOLD" || stage.status === "PENDING"}
                                                             onClick={() =>
                                                                 navigate(`/invest/${stage.id}/${movie.id}`)
                                                             }
                                                             className={`rounded-lg px-4 py-2 text-sm font-semibold text-white transition
-                                                                         ${stage.status === "COMPLETED"
+                                                                         ${stage.status === "COMPLETED" || stage.status === "HOLD" || stage.status === "PENDING"
                                                                     ? "cursor-not-allowed bg-zinc-600 opacity-50"
                                                                     : "bg-red-600 hover:bg-red-700"
                                                                 }`}
                                                         >
                                                             {stage.status === "COMPLETED"
                                                                 ? "Completed"
-                                                                : "Invest"}
+                                                                : stage.status === "HOLD"
+                                                                    ? "On Hold"
+                                                                    : "Invest Now"}
                                                         </button>
 
                                                     </td>

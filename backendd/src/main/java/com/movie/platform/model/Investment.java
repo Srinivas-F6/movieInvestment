@@ -1,13 +1,13 @@
 package com.movie.platform.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;	
 
 @Entity
 @Table(name = "investments")
@@ -21,34 +21,30 @@ public class Investment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // INVESTOR
     @JsonBackReference("user-investments")
     @ManyToOne
     @JoinColumn(name = "investor_id", nullable = false)
     private User investor;
 
-    // MOVIE
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 
-    // NUMBER OF SLOTS PURCHASED
-    @Column(	nullable = false)
+    @NotNull
+    @Min(1)
+    @Column(nullable = false)
     private Integer slotsToBuy;
-
-    // TOTAL INVESTMENT AMOUNT
+    
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false)
     @Column(nullable = false)
     private BigDecimal amount;
-
-    // OPTIONAL:
-    // stores slot price at investment time
-    private BigDecimal slotPrice;
 
     private LocalDateTime investedAt;
     
     @ManyToOne
     @JoinColumn(name = "stage_id")
-    private InvestmentStage stage;
+    private InvestmentStage stage;	
 
     @PrePersist
     protected void onCreate() {

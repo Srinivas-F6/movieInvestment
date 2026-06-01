@@ -65,23 +65,13 @@ export const apiSlice = createApi({
       invalidatesTags: ['Movie'],
     }),
 
-    // UPDATE MOVIE STATUS
-    updateMovieStatus: builder.mutation({
-      query: ({ movieId, status }) => ({
-        url: `/movies/${movieId}/status`,
-        method: 'PUT',
-        params: {
-          status,
-        },
-      }),
-    }),
-
     searchMovies: builder.query({
       query: (title) => ({
         url: `/movies/search`,
         params: { title },
       }),
     }),
+
 
     // ================= INVESTMENTS =================
 
@@ -125,17 +115,57 @@ export const apiSlice = createApi({
       providesTags: ['Stage'],
     }),
 
+    // ================= Admin Panel =================
+
     updateStageStatus: builder.mutation({
       query: ({ stageId, status }) => ({
-        url: `/investments/stage/${stageId}/status`,
+        url: `/investments/stages/${stageId}/status`,
         method: 'PUT',
         params: {
           status,
         },
       }),
     }),
+
+    hideMovie: builder.mutation({
+      query: (movieId) => ({
+        url: `/movies/${movieId}/hide`,
+        method: 'PUT',
+      }),
+      invalidatesTags: ['Movies'],
+    }),
+
+    unhideMovie: builder.mutation({
+      query: (movieId) => ({
+        url: `/movies/${movieId}/unhide`,
+        method: 'PUT',
+      }),
+      invalidatesTags: ['Movies'],
+    }),
+
+    updateMovieStatus: builder.mutation({
+      query: ({ movieId, status }) => ({
+        url: `/movies/${movieId}/status`,
+        method: 'PUT',
+        params: {
+          status,
+        },
+      }),
+    }),
+
+    updateUserRole : builder.mutation({
+      query: ({ email, role })=> ({
+        url: `movies/admin/users/${email}/role`,
+        method: 'PUT',
+        params: {
+          role,
+        },
+      })
+    })
+
   }),
 });
+
 
 export const {
   // AUTH
@@ -147,8 +177,8 @@ export const {
   useGetMovieByIdQuery,
   useGetMoviesByProducerQuery,
   useCreateMovieMutation,
-  useUpdateMovieStatusMutation,
   useSearchMoviesQuery,
+
 
   // INVESTMENTS
   useGetInvestmentsForMovieQuery,
@@ -156,5 +186,12 @@ export const {
   useInvestInStageMutation,
   useCreateStageMutation,
   useGetStagesByMovieQuery,
+
+  // AdminPanel 
+  useUpdateMovieStatusMutation,
+  useHideMovieMutation,
+  useUnhideMovieMutation,
   useUpdateStageStatusMutation,
+  useUpdateUserRoleMutation,
+
 } = apiSlice;

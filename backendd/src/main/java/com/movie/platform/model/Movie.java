@@ -1,6 +1,7 @@
 package com.movie.platform.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -23,24 +24,33 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Title is required")
+    @Size(max = 255)
     private String title;
 
+    @NotBlank(message = "Description required")
+    @Size(max = 3000)
     @Column(length = 3000)
     private String description;
 
+    @NotEmpty(message = "Crew required")
     @ElementCollection
     private List<String> crew = new ArrayList<>();
 
+    @NotEmpty(message = "Cast required")
     @ElementCollection
     private List<String> cast = new ArrayList<>();
 
+    @NotNull
+    @DecimalMin(value = "1.0", message = "Funding must be positive")
     @Column(name = "target_funding")
     private BigDecimal targetFunding;
 
     @Column(name = "current_funding")
-    private BigDecimal currentFunding;
+    private BigDecimal currentFunding = BigDecimal.ZERO;
 
-    // SLOT SYSTEM
+    @NotNull
+    @DecimalMin(value = "1.0")
     private BigDecimal slotPrice;
 
 
@@ -51,11 +61,11 @@ public class Movie {
 
     @Enumerated(EnumType.STRING)
     private MovieStatus status = MovieStatus.PENDING;
-
-    // MOVIE IMAGES
+    	
+    private Boolean hidden = false;
+    // MOVIE IMAGES 
     
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-    private List<MovieImage> images = new ArrayList<>();
+    private String imageUrl;
 
     // STAGE-WISE FUNDING
     @JsonManagedReference
@@ -68,6 +78,10 @@ public class Movie {
     protected void onCreate() {
 
         createdAt = LocalDateTime.now();
+        
+        if(hidden == null) {
+        	hidden = false;
+        }
 
         if (currentFunding == null) {
             currentFunding = BigDecimal.ZERO;
@@ -82,6 +96,6 @@ public class Movie {
     public enum MovieStatus {
         PENDING,
         APPROVED,
-        REJECTED
+        REJECTED,
     }
 }

@@ -1,12 +1,12 @@
 package com.movie.platform.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Getter
@@ -20,9 +20,12 @@ public class InvestmentStage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Stage name required")
     @Enumerated(EnumType.STRING)
     private StageName stageName;
 
+    @NotNull
+    @DecimalMin(value = "1.0", message = "Stage amount must be positive")
     private BigDecimal stageAmount;
 
     private BigDecimal collectedAmount = BigDecimal.ZERO;
@@ -45,6 +48,7 @@ public class InvestmentStage {
     public enum StageStatus {
         PENDING,
         ACTIVE,
+        HOLD,
         COMPLETED
     }
 }

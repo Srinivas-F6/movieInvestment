@@ -14,6 +14,7 @@ import {MovieDetails} from './pages/MovieDetails';
 import CreateStage from './pages/CreateStage';
 import {StageDetails} from './pages/StageDetails';
 import AdminDashboard from './pages/AdminDashboard';
+import {Investors} from './pages/Investors';
 
 function App() {
 
@@ -67,6 +68,11 @@ function App() {
             <Route
               path="/admin"
               element={<AdminDashboard />}
+            />
+
+            <Route
+              path="/movie/investorDetails/:movieId"
+              element={<Investors />}
             />
 
           </Routes>

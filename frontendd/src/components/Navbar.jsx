@@ -24,6 +24,8 @@ const Navbar = () => {
 
   const { data: movies, } = useSearchMoviesQuery(search, { skip: !search, });
 
+  console.log(movies);
+
   const handleLogout = () => {
 
     dispatch(logout());
@@ -66,22 +68,24 @@ const Navbar = () => {
 
               <div className="absolute left-0 top-full z-50 mt-2 w-full overflow-hidden rounded-xl border border-zinc-700 bg-zinc-900 shadow-2xl">
 
-                {movies?.length > 0 ? (
+                {movies?.filter((movie) => movie.hidden === false).length > 0 ? (
 
-                  movies.map((movie) => (
+                  movies
+                    ?.filter((movie) => movie.hidden === false)
+                    .map((movie) => (
 
-                    <div
-                      key={movie.id}
-                      onClick={() => {
-                        navigate(`/movie/${movie.id}`);
-                        setSearch('');
-                      }}
-                      className="cursor-pointer px-4 py-3 text-white hover:bg-zinc-800"
-                    >
-                      {movie.title}
-                    </div>
+                      <div
+                        key={movie.id}
+                        onClick={() => {
+                          navigate(`/movie/${movie.id}`);
+                          setSearch('');
+                        }}
+                        className="cursor-pointer px-4 py-3 text-white hover:bg-zinc-800"
+                      >
+                        {movie.title}
+                      </div>
 
-                  ))
+                    ))
 
                 ) : (
 

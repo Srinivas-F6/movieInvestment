@@ -3,14 +3,13 @@
 import com.movie.platform.model.*;
 import com.movie.platform.repository.MovieRepository;
 import com.movie.platform.repository.UserRepository;
-import com.movie.platform.repository.MovieImageRepository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +23,6 @@ public class MovieService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private MovieImageRepository movieImageRepository;
 
     private final String UPLOAD_DIR = "uploads/movies/";
 
@@ -50,65 +46,90 @@ public class MovieService {
     }
 
     // CREATE MOVIE
+    @Transactional
     public Movie createMovie(
             Movie movie,
-            List<MultipartFile> images,
+            MultipartFile image,
             Long producerId
     ) {
 
+        // FIND PRODUCER
         User producer = userRepository.findById(producerId)
                 .orElseThrow(() ->
                         new RuntimeException("Producer not found"));
 
         movie.setProducer(producer);
 
-        
-        if(movie.getCast() == null){
+        // SAFE INITIALIZATION
+        if (movie.getCast() == null) {
             movie.setCast(new ArrayList<>());
         }
 
-        if(movie.getCrew() == null){
+        if (movie.getCrew() == null) {
             movie.setCrew(new ArrayList<>());
         }
-        Movie savedMovie = movieRepository.save(movie);
 
-        // SAVE IMAGES
-        if (images != null && !images.isEmpty()) {
+        // IMAGE UPLOAD
+        if (image != null && !image.isEmpty()) {
 
-            List<MovieImage> movieImages = new ArrayList<>();
+            try {
 
-            for (MultipartFile file : images) {
+                // FILE SIZE CHECK (MAX 5MB)
+                if (image.getSize() > 5 * 1024 * 1024) {
 
-                try {
-
-                    String fileName =
-                            UUID.randomUUID() + "_" + file.getOriginalFilename();
-
-                    Path path = Paths.get(UPLOAD_DIR + fileName);
-
-                    Files.createDirectories(path.getParent());
-
-                    Files.write(path, file.getBytes());
-
-                    MovieImage movieImage = new MovieImage();
-
-                    movieImage.setImageUrl("/uploads/movies/" + fileName);
-
-                    movieImage.setMovie(savedMovie);
-
-                    movieImages.add(movieImage);
-
-                } catch (IOException e) {
-                    throw new RuntimeException("Image upload failed");
+                    throw new RuntimeException(
+                            "Image size exceeds 5MB"
+                    );
                 }
+
+                // FILE TYPE CHECK
+                String contentType =
+                        image.getContentType();
+
+                if (
+                        contentType == null ||
+                        (
+                            !contentType.equals("image/jpeg") &&
+                            !contentType.equals("image/png") &&
+                            !contentType.equals("image/webp")
+                        )
+                ) {
+
+                    throw new RuntimeException(
+                            "Only JPG, PNG, WEBP images allowed"
+                    );
+                }
+
+                // GENERATE UNIQUE FILE NAME
+                String fileName =
+                        UUID.randomUUID()
+                        + "_"
+                        + image.getOriginalFilename();
+
+                
+                Path path = Paths.get(
+                        UPLOAD_DIR + fileName
+                );
+
+               Files.createDirectories(
+                        path.getParent()
+                );
+                
+                image.transferTo(path);
+                
+                movie.setImageUrl(
+                        "/uploads/movies/" + fileName
+                );
+
+            } catch (IOException e) {
+
+                throw new RuntimeException(
+                        "Image upload failed"
+                );
             }
-
-            movieImageRepository.saveAll(movieImages);
-
-            savedMovie.setImages(movieImages);
         }
 
-        return movieRepository.save(savedMovie);
+        return movieRepository.save(movie);
     }
 
     // UPDATE MOVIE STATUS
@@ -128,5 +149,43 @@ public class MovieService {
     public List<Movie> searchMovies(String title) {
         return movieRepository
                 .findByTitleContainingIgnoreCase(title);
+    }
+    
+    
+    public void hideMovie(Long movieId) {
+
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() ->
+                        new RuntimeException("Movie not found")
+                );
+
+        movie.setHidden(true);
+
+        movieRepository.save(movie);
+    }
+
+    // UNHIDE MOVIE
+
+    public void unhideMovie(Long movieId) {
+
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() ->
+                        new RuntimeException("Movie not found")
+                );
+
+        movie.setHidden(false);
+
+        movieRepository.save(movie);
+    }
+    
+  //  Update Role
+    public void updateRole(String email, Role role) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setRole(role);
+
+        userRepository.save(user);
     }
 }

@@ -2,7 +2,10 @@ import { useNavigate, useParams, Navigate } from "react-router-dom";
 
 import { useSelector } from "react-redux";
 
-import { useGetStagesByMovieQuery, useGetMovieByIdQuery } from "../store/apiSlice";
+import {
+    useGetStagesByMovieQuery,
+    useGetMovieByIdQuery
+} from "../store/apiSlice";
 
 export function StageDetails() {
 
@@ -12,26 +15,30 @@ export function StageDetails() {
 
     const { token } = useSelector((state) => state.auth);
 
+    // STAGES QUERY
     const {
         data: stages,
         isLoading,
         isError,
     } = useGetStagesByMovieQuery(movieId);
 
+    // MOVIE QUERY
     const {
         data: movie,
-        Loading,
-        Error,
+        isLoading: movieLoading,
+        isError: movieError,
     } = useGetMovieByIdQuery(movieId);
 
     console.log(stages);
     console.log(movie);
 
+    // AUTH CHECK
     if (!token) {
         return <Navigate to="/login" />;
     }
 
-    if (isLoading) {
+    // LOADING
+    if (isLoading || movieLoading) {
 
         return (
 
@@ -43,13 +50,14 @@ export function StageDetails() {
         );
     }
 
-    if (isError) {
+    // ERROR
+    if (isError || movieError) {
 
         return (
 
             <div className="flex min-h-screen items-center justify-center bg-black text-white">
 
-                Failed to load stages.
+                Failed to load data.
 
             </div>
         );
@@ -121,7 +129,7 @@ export function StageDetails() {
                                     </th>
 
                                     <th className="px-6 py-4 font-semibold">
-                                        Remaining slots
+                                        Remaining Slots
                                     </th>
 
                                     <th className="px-6 py-4 font-semibold">
@@ -144,6 +152,11 @@ export function StageDetails() {
                                         Number(stage.stageAmount) -
                                         Number(stage.collectedAmount || 0);
 
+                                    const remainingSlots =
+                                        movie?.slotPrice
+                                            ? remaining / movie.slotPrice
+                                            : 0;
+
                                     return (
 
                                         <tr
@@ -151,21 +164,31 @@ export function StageDetails() {
                                             className="border-t border-zinc-800 text-zinc-300 transition hover:bg-zinc-800/40"
                                         >
 
+                                            {/* STAGE NAME */}
+
                                             <td className="px-6 py-5 font-semibold text-white">
                                                 {stage.stageName}
                                             </td>
+
+                                            {/* STAGE AMOUNT */}
 
                                             <td className="px-6 py-5">
                                                 ${stage.stageAmount}
                                             </td>
 
+                                            {/* COLLECTED */}
+
                                             <td className="px-6 py-5">
                                                 ${stage.collectedAmount || 0}
                                             </td>
 
+                                            {/* REMAINING SLOTS */}
+
                                             <td className="px-6 py-5">
-                                                {remaining / movie.slotPrice}
+                                                {remainingSlots}
                                             </td>
+
+                                            {/* STATUS */}
 
                                             <td className="px-6 py-5">
 
@@ -183,22 +206,26 @@ export function StageDetails() {
 
                                             </td>
 
+                                            {/* ACTION */}
+
                                             <td className="px-6 py-5">
 
                                                 <button
-                                                    disabled={stage.status === "COMPLETED" || stage.status === "PENDING"}
+                                                    disabled={stage.status === "COMPLETED" || stage.status === "HOLD" || stage.status === "PENDING"}
                                                     onClick={() =>
                                                         navigate(`/invest/${stage.id}/${movie.id}`)
                                                     }
                                                     className={`rounded-lg px-4 py-2 text-sm font-semibold text-white transition
-                                                                         ${stage.status === "COMPLETED"
+                                                                         ${stage.status === "COMPLETED" || stage.status === "HOLD" || stage.status === "PENDING"
                                                             ? "cursor-not-allowed bg-zinc-600 opacity-50"
                                                             : "bg-red-600 hover:bg-red-700"
-                                                        } || ${stage.status === "PENDING" ? "cursor-not-allowed" : "bg-red-600 hover:bg-red-700"}`}
+                                                        }`}
                                                 >
                                                     {stage.status === "COMPLETED"
                                                         ? "Completed"
-                                                        : "Invest"}
+                                                        : stage.status === "HOLD"
+                                                            ? "On Hold"
+                                                            : "Invest Now"}
                                                 </button>
 
                                             </td>

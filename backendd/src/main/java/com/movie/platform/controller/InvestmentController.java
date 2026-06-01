@@ -1,5 +1,6 @@
 package com.movie.platform.controller;
 
+import com.movie.platform.dto.InvestorsResponse;
 import com.movie.platform.model.Investment;
 import com.movie.platform.model.InvestmentStage;
 import com.movie.platform.model.Movie;
@@ -7,6 +8,7 @@ import com.movie.platform.service.InvestmentService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -22,9 +24,7 @@ public class InvestmentController {
 
     // GET ALL INVESTMENTS OF A MOVIE
     @GetMapping("/movie/{movieId}")
-    public ResponseEntity<List<Investment>> getInvestmentsForMovie(
-            @PathVariable Long movieId
-    ) {
+    public ResponseEntity<List<InvestorsResponse>> getInvestmentsByMovie(@PathVariable Long movieId) {
 
         return ResponseEntity.ok(
                 investmentService.getInvestmentsByMovie(movieId)
@@ -43,6 +43,7 @@ public class InvestmentController {
     }
     
    //create Stages
+    @PreAuthorize("hasRole('PRODUCER')")
     @PostMapping("/{movieId}/stages")
     public ResponseEntity<InvestmentStage> createStage(
             @PathVariable Long movieId,
@@ -59,6 +60,7 @@ public class InvestmentController {
     
     
  // INVEST MONEY INTO STAGE
+    @PreAuthorize("hasAnyRole('PRODUCER','USER')")
     @PostMapping("/stages/{stageId}/{movieId}/{userId}/invest")
     public ResponseEntity<InvestmentStage> investInStage( @PathVariable Long stageId, @PathVariable Long movieId,
     		 @PathVariable Long userId, @RequestParam Integer slotsToBuy ) {
@@ -80,7 +82,8 @@ public class InvestmentController {
     }
     
   // Update Stage status
-     @PutMapping("/stage/{stageId}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+     @PutMapping("/stages/{stageId}/status")
      public ResponseEntity<InvestmentStage> updateStageStatus(@PathVariable Long stageId, @RequestParam InvestmentStage.StageStatus status){
     	 return ResponseEntity.ok(
     			 investmentService.updateStageStatus(stageId, status));
