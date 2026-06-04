@@ -37,7 +37,7 @@ const Dashboard = () => {
   const [cast, setCast] = useState('');
   const [crew, setCrew] = useState('');
   const [image, setImage] = useState(null);
-
+  const [search, setSearch] = useState('');
   // ================= API =================
 
   const [
@@ -54,6 +54,12 @@ const Dashboard = () => {
     {
       skip: !userId,
     }
+  );
+
+   const filteredMovies = investments?.filter((investment) =>
+    investment.movie?.title
+      .toLowerCase()
+      .includes(search.toLowerCase())
   );
 
 
@@ -83,7 +89,7 @@ const Dashboard = () => {
 
         slotPrice: parseFloat(slotPrice),
 
-        
+
 
 
         cast: cast
@@ -126,6 +132,8 @@ const Dashboard = () => {
       setCast('');
       setCrew('');
       setImage(null);
+
+      navigate('/');
 
     } catch (err) {
 
@@ -173,21 +181,23 @@ const Dashboard = () => {
 
   return (
 
-    <div className="mx-auto max-w-7xl px-4 py-10">
+    <div className="mx-auto max-w-7xl px-6 py-8">
 
       {/* HEADER */}
 
-      <div className="mb-10">
+      <div className="mb-8 flex flex-col gap-3 border-b border-zinc-800 pb-6 md:flex-row md:items-center md:justify-between">
 
-        <h1 className="mb-2 text-4xl font-extrabold text-white">
-          Dashboard
-        </h1>
+        <div>
+          <h1 className="text-3xl font-bold text-white">
+            Dashboard
+          </h1>
 
-        <p className="text-zinc-400">
-          Welcome back!
-        </p>
+          <p className="mt-1 text-sm text-zinc-400">
+            Welcome back! Manage your movies and investments.
+          </p>
+        </div>
 
-        <div className="mt-3 inline-flex rounded-full bg-red-500/20 px-4 py-1 text-sm font-semibold uppercase tracking-wide text-red-400">
+        <div className="inline-flex w-fit rounded-full border border-red-500/30 bg-red-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-red-400">
           {role}
         </div>
 
@@ -196,24 +206,26 @@ const Dashboard = () => {
       {/* ================= PRODUCER SECTION ================= */}
 
       {role === 'PRODUCER' && (
+        <div className="mb-8 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-6 shadow-lg backdrop-blur">
 
-        <div className="mb-10 rounded-3xl border border-zinc-800 bg-zinc-900 p-8 shadow-xl">
+          <div className="mb-6 border-b border-zinc-800 pb-4">
+            <h2 className="text-2xl font-bold text-white">
+              Create Movie Campaign
+            </h2>
 
-          <h2 className="mb-6 text-3xl font-bold text-white">
-            Create a New Movie Campaign
-          </h2>
+            <p className="mt-1 text-sm text-zinc-400">
+              Submit a new movie project for approval and funding.
+            </p>
+          </div>
 
           <form
             onSubmit={handleCreateMovie}
-            className="space-y-5"
+            className="space-y-6"
           >
-
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
 
               {/* TITLE */}
-
               <div>
-
                 <label className="mb-2 block text-sm font-medium text-zinc-300">
                   Movie Title
                 </label>
@@ -222,37 +234,32 @@ const Dashboard = () => {
                   type="text"
                   required
                   value={title}
-                  onChange={(e) =>
-                    setTitle(e.target.value)
-                  }
+                  onChange={(e) => setTitle(e.target.value)}
                   placeholder="Enter movie title"
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-red-500"
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white outline-none transition focus:border-red-500 focus:ring-1 focus:ring-red-500"
                 />
-
               </div>
 
-              {/* MOVIE IMAGES */}
-
+              {/* POSTER */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-zinc-300">
                   Movie Poster
                 </label>
 
                 <input
-                  type="file"  // 1170 X 870
+                  type="file"
+                  required
                   accept="image/jpeg,image/png,image/webp"
                   onChange={handleImageChange}
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white"
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white"
                 />
-
                 <p className="mt-2 text-xs text-zinc-500">
-                  Max size: 5MB • JPG, PNG, WEBP
+                  JPG, PNG, WEBP • Max 5 MB • Recommended 1100×590
                 </p>
               </div>
 
-              {/* SLOT PRICE  */}
+              {/* SLOT PRICE */}
               <div>
-
                 <label className="mb-2 block text-sm font-medium text-zinc-300">
                   Slot Price
                 </label>
@@ -261,12 +268,10 @@ const Dashboard = () => {
                   type="number"
                   required
                   value={slotPrice}
-                  onChange={(e) =>
-                    setSlotPrice(e.target.value)
-                  }
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white"
+                  onChange={(e) => setSlotPrice(e.target.value)}
+                  placeholder="₹ per slot"
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white outline-none transition focus:border-red-500 focus:ring-1 focus:ring-red-500"
                 />
-
               </div>
 
               {/* CAST */}
@@ -278,37 +283,31 @@ const Dashboard = () => {
                 <input
                   type="text"
                   value={cast}
-                  onChange={(e) =>
-                    setCast(e.target.value)
-                  }
+                  required
+                  onChange={(e) => setCast(e.target.value)}
                   placeholder="Actor1, Actor2"
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white"
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white outline-none transition focus:border-red-500 focus:ring-1 focus:ring-red-500"
                 />
-
               </div>
+
               {/* CREW */}
               <div>
-
                 <label className="mb-2 block text-sm font-medium text-zinc-300">
                   Crew
                 </label>
 
                 <input
                   type="text"
+                  required
                   value={crew}
-                  onChange={(e) =>
-                    setCrew(e.target.value)
-                  }
+                  onChange={(e) => setCrew(e.target.value)}
                   placeholder="Director, Music Director"
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white"
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white outline-none transition focus:border-red-500 focus:ring-1 focus:ring-red-500"
                 />
-
               </div>
 
               {/* TARGET FUNDING */}
-
               <div>
-
                 <label className="mb-2 block text-sm font-medium text-zinc-300">
                   Target Funding (₹)
                 </label>
@@ -317,323 +316,314 @@ const Dashboard = () => {
                   type="number"
                   required
                   value={targetFunding}
-                  onChange={(e) =>
-                    setTargetFunding(
-                      e.target.value
-                    )
-                  }
-                  placeholder="Enter funding amount"
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-red-500"
+                  onChange={(e) => setTargetFunding(e.target.value)}
+                  placeholder="Funding goal"
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white outline-none transition focus:border-red-500 focus:ring-1 focus:ring-red-500"
                 />
-
               </div>
-
             </div>
 
             {/* DESCRIPTION */}
-
             <div>
-
               <label className="mb-2 block text-sm font-medium text-zinc-300">
                 Movie Description
               </label>
 
               <textarea
-                rows="5"
+                rows="4"
                 required
                 value={description}
-                onChange={(e) =>
-                  setDescription(e.target.value)
-                }
+                onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe your movie project..."
-                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-red-500"
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white outline-none transition focus:border-red-500 focus:ring-1 focus:ring-red-500"
               />
-
             </div>
 
-            {/* BUTTON */}
-
-            <button
-              type="submit"
-              disabled={isCreating}
-              className="rounded-xl bg-red-600 px-6 py-3 font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-
-              {isCreating
-                ? 'Creating...'
-                : 'Submit Movie Project'}
-
-            </button>
-
+            {/* SUBMIT */}
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={isCreating}
+                className="rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-red-700 hover:shadow-lg hover:shadow-red-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isCreating
+                  ? 'Creating...'
+                  : 'Submit Movie Project'}
+              </button>
+            </div>
           </form>
 
         </div>
       )}
 
       {/* ================= Producer Movies =================== */}
-      {role === 'PRODUCER' && (
-        <div className="mt-10 mb-10 rounded-3xl border border-zinc-800 bg-zinc-900 p-8 shadow-xl">
+      {role === "PRODUCER" && (
+        <div className="mb-8 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-6 shadow-lg backdrop-blur">
 
-          <h2 className="mb-6 text-3xl font-bold text-white">
-            Your Movies
-          </h2>
+          {/* Header */}
+          <div className="mb-6 border-b border-zinc-800 pb-4">
+            <h2 className="text-2xl font-bold text-white">
+              Your Movies
+            </h2>
+
+            <p className="mt-1 text-sm text-zinc-400">
+              Manage your movie campaigns and funding stages.
+            </p>
+          </div>
 
           {moviesLoading && (
-            <p className="text-zinc-400">
+            <div className="py-8 text-center text-zinc-400">
               Loading movies...
-            </p>
+            </div>
           )}
 
           {moviesError && (
-            <p className="text-red-500">
+            <div className="py-8 text-center text-red-500">
               Failed to load movies.
-            </p>
+            </div>
           )}
 
-          {producerMovies &&
-            producerMovies.length === 0 && (
+          {producerMovies?.length === 0 && (
+            <div className="py-8 text-center text-zinc-500">
+              No movies created yet.
+            </div>
+          )}
 
-              <p className="text-zinc-400">
-                No movies created yet.
-              </p>
-            )}
+          {producerMovies?.length > 0 && (
+            <div className="space-y-4">
 
-          {producerMovies &&
-            producerMovies.length > 0 && (
+              {producerMovies.map((movie) => (
 
-              <div className="space-y-4">
+                <div
+                  key={movie.id}
+                  className="rounded-xl border border-zinc-800 bg-zinc-950/80 p-5 transition hover:border-red-500/40"
+                >
 
-                {producerMovies.map((movie) => (
-                  <div
-                    key={movie.id}
-                    className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5"
-                  >
+                  <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
 
-                    <h3 className="text-2xl font-bold text-white">
-                      {movie.title}
-                    </h3>
+                    {/* Left Side */}
+                    <div>
 
-                    <div className="mt-4 flex items-center justify-between">
-                      <div className="flex flex-wrap gap-3">
-                        {/* stats */}
-                        <div className="rounded-lg bg-red-500/10 px-4 py-2 text-red-400">
-                          Target: ₹
-                          {movie.targetFunding}
+                      <h3 className="text-2xl font-bold text-white">
+                        {movie.title}
+                      </h3>
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+
+                        <div className="rounded-full bg-red-500/10 px-3 py-1 text-sm font-medium text-red-400">
+                          Total Budget: ₹{movie.targetFunding}
                         </div>
 
-                        <div className="rounded-lg bg-blue-500/10 px-4 py-2 text-blue-400">
-                          Raised: ₹
-                          {movie.currentFunding}
+                        <div className="rounded-full bg-blue-500/10 px-3 py-1 text-sm font-medium text-blue-400">
+                          Raised ₹{movie.currentFunding}
                         </div>
-                        <div className="rounded-lg bg-yellow-500/10 px-4 py-2 text-yellow-400">
-                          Status:
+
+                        <div
+                          className={`rounded-full px-2 py-1 text-sm 
+                    ${movie.status === "APPROVED"
+                              ? "bg-green-500/10 text-green-400"
+                              : movie.status === "REJECTED"
+                                ? "bg-red-500/10 text-red-400"
+                                : "bg-yellow-500/10 text-yellow-400"
+                            }`}
+                        >
                           {movie.status}
                         </div>
-                      </div>
-
-                      <div className="flex justify-end gap-3">
-
-                        <button
-                          onClick={() => {
-
-                            if (movie.status === 'APPROVED') {
-
-                              navigate(`/movies/${movie.id}/create-stage`);
-
-                            } else if (movie.status === 'PENDING') {
-
-                              alert(
-                                'Movie is still pending admin approval.'
-                              );
-
-                            } else if (movie.status === 'REJECTED') {
-                              alert(
-                                'Movie was rejected by admin.'
-                              );
-                            } else {
-                              alert(
-                                `Cannot create stage when movie status is ${movie.status}`
-                              );
-
-                            }
-                          }}
-                          className="rounded-xl bg-purple-600 px-4 py-2 font-semibold text-white transition hover:bg-purple-700"
-                        >
-                          + Create Stage
-                        </button>
-
-                        <button
-                          onClick={() =>
-                            navigate(`/movie/stageDetails/${movie.id}`)
-                          }
-                          className="rounded-xl bg-purple-600 px-4 py-2 font-semibold text-white hover:bg-purple-700"
-                        >
-                          stage details
-                        </button>
-
-
-                        <button
-                          onClick={() =>
-                            navigate(`/movie/investorDetails/${movie.id}`)
-                          }
-                          className="rounded-xl bg-purple-600 px-4 py-2 font-semibold text-white hover:bg-purple-700"
-                        >
-                          Investors
-                        </button>
 
                       </div>
+
+                    </div>
+
+                    {/* Right Side */}
+                    <div className="flex flex-wrap gap-2">
+
+                      <button
+                        onClick={() => {
+
+                          if (movie.status === "APPROVED") {
+
+                            navigate(`/movies/${movie.id}/create-stage`);
+
+                          } else if (movie.status === "PENDING") {
+
+                            alert(
+                              "Movie is still pending admin approval."
+                            );
+
+                          } else if (movie.status === "REJECTED") {
+
+                            alert(
+                              "Movie was rejected by admin."
+                            );
+
+                          } else {
+
+                            alert(
+                              `Cannot create stage when movie status is ${movie.status}`
+                            );
+
+                          }
+
+                        }}
+                        className="rounded-lg bg-purple-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-purple-700"
+                      >
+                        Create Stage
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          navigate(`/movie/stageDetails/${movie.id}`)
+                        }
+                        className="rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+                      >
+                        Stage Details
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          navigate(`/movie/investorDetails/${movie.id}`)
+                        }
+                        className="rounded-lg bg-cyan-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-cyan-700"
+                      >
+                        Investors
+                      </button>
+
                     </div>
 
                   </div>
 
+                </div>
 
-                ))}
+              ))}
 
-              </div>
-            )}
+            </div>
+          )}
 
-        </div>)}
+        </div>
+      )}
 
 
 
       {/* ================= INVESTMENTS SECTION ================= */}
 
-      <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-8 shadow-xl">
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-6 shadow-lg backdrop-blur">
 
-        <h2 className="mb-6 text-3xl font-bold text-white">
-          Your Investments
-        </h2>
+        {/* Header */}
+        <div className="mb-6 border-b border-zinc-800 pb-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
-        {/* LOADING */}
+            <div>
+              <h2 className="text-2xl font-bold text-white">
+                Your Investments
+              </h2>
 
+              <p className="mt-1 text-sm text-zinc-400">
+                Track all your movie investments and funding contributions.
+              </p>
+            </div>
+
+            {/* Search */}
+            <div>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search movie..."
+                className="w-56 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+
+          </div>
+        </div>  
+
+        {/* Loading */}
         {isLoading && (
-
           <div className="flex justify-center py-10">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-red-500 border-t-transparent" />
+          </div>
+        )}
 
-            <div className="h-12 w-12 animate-spin rounded-full border-4 border-red-500 border-t-transparent" />
+        {/* Error */}
+        {isError && (
+          <div className="py-8 text-center text-red-500">
+            Failed to load investments.
+          </div>
+        )}
+
+        {/* Empty */}
+        {investments?.length === 0 && (
+          <div className="py-8 text-center text-zinc-500">
+            You haven't made any investments yet.
+          </div>
+        )}
+
+        {/* Investment List */}
+        {filteredMovies?.length > 0 && (
+          <div className="space-y-4">
+
+            {filteredMovies.map((investment) => (
+
+              <div
+                key={investment.id}
+                className="rounded-xl border border-zinc-800 bg-zinc-950/80 p-4 transition hover:border-red-500/40"
+              >
+
+                <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+
+                  {/* Left Side */}
+                  <div>
+                    <h3 className="mt-1 text-2xl font-bold text-white">
+                      {investment.movie?.title}
+                    </h3>
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+
+                      <div className="rounded-full bg-purple-500/10 px-2 py-1 text-sm font-medium text-purple-400">
+                        Stage: {investment.stage?.stageName}
+                      </div>
+
+                      <div className="rounded-full bg-red-500/10 px-2 py-1 text-sm font-medium text-red-400">
+                        Amount: ₹{investment.amount}
+                      </div>
+
+                      <div className="rounded-full bg-blue-500/10 px-2 py-1 text-sm font-medium text-blue-400">
+                        Slots: {investment.slotsToBuy}
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  {/* Right Side */}
+                  <div className="lg:text-right">
+
+                    <p className="text-xs uppercase tracking-wider text-zinc-500">
+                      Invested On
+                    </p>
+
+                    <p className="mt-1 text-sm font-medium text-zinc-300">
+                      {new Date(investment.investedAt).toLocaleString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            ))}
 
           </div>
         )}
 
-        {/* ERROR */}
-
-        {isError && (
-
-          <p className="font-medium text-red-500">
-            Failed to load investments.
-          </p>
-        )}
-
-        {/* EMPTY */}
-
-        {investments &&
-          investments.length === 0 && (
-
-            <p className="text-zinc-400">
-              You haven't made any investments
-              yet.
-            </p>
-          )}
-
-        {/* INVESTMENTS LIST */}
-
-        {investments &&
-          investments.length > 0 && (
-
-            <div className="space-y-4">
-
-              {investments &&
-                investments.length > 0 && (
-
-                  <div className="space-y-4">
-
-                    {investments.map((investment) => (
-
-                      <div
-                        key={investment.id}
-                        className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 transition hover:border-red-500/40"
-                      >
-
-                        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-
-                          {/* LEFT SIDE */}
-
-                          <div className="space-y-3">
-
-                            <div>
-
-                              <p className="text-sm text-zinc-500">
-                                Movie
-                              </p>
-
-                              <h3 className="text-2xl font-bold text-white">
-                                {investment.movie?.title}
-                              </h3>
-
-                            </div>
-
-                            <div className="flex flex-wrap gap-3">
-
-                              <div className="rounded-xl bg-purple-500/10 px-4 py-2 text-sm font-semibold text-purple-400">
-
-                                Stage:
-                                {" "}
-                                {investment.stage?.stageName}
-
-                              </div>
-
-                              <div className="rounded-xl bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-400">
-
-                                Invested:
-                                {" "}
-                                ₹{investment.amount}
-
-                              </div>
-
-                              <div className="rounded-xl bg-blue-500/10 px-4 py-2 text-sm font-semibold text-blue-400">
-
-                                Slots:
-                                {" "}
-                                {investment.slotsToBuy}
-
-                              </div>
-
-                            </div>
-
-                          </div>
-
-                          {/* RIGHT SIDE */}
-
-                          <div className="text-right">
-
-                            <p className="text-sm text-zinc-500">
-                              Invested Date
-                            </p>
-
-                            <p className="mt-1 text-sm font-medium text-zinc-300">
-
-                              {new Date(
-                                investment.investedAt
-                              ).toLocaleDateString("en-IN")}
-
-                            </p>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                    ))}
-
-                  </div>
-                )}
-
-            </div>
-          )}
-
       </div>
-
     </div>
   );
 };

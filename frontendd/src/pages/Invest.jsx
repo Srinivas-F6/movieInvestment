@@ -65,25 +65,40 @@ const Invest = () => {
     };
 
     return (
+        <div className="mx-auto max-w-4xl px-4 py-6">
 
-        <div className="relative flex min-h-[80vh] items-center justify-center px-4">
-            <div className="absolute left-6 top-6">
+            {/* Header */}
+
+            <div className="mb-6 flex items-center justify-between">
+
+                <div>
+
+                    <h1 className="text-2xl font-bold text-white">
+                        Invest In Stage
+                    </h1>
+
+                    <p className="mt-1 text-sm text-zinc-400">
+                        Purchase investment slots and support this movie project
+                    </p>
+
+                </div>
 
                 <button
                     onClick={() => navigate(-1)}
-                    className="rounded-xl border border-zinc-700 bg-zinc-900 px-5 py-2 font-semibold text-white transition hover:border-red-500 hover:bg-red-600/10"
+                    className="rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:border-red-500 hover:text-red-400"
                 >
                     ← Back
                 </button>
 
             </div>
 
+            {/* Investment Form */}
 
-            <div className="w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-900 p-8 shadow-2xl">
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-6 shadow-lg backdrop-blur">
 
-                <h1 className="mb-6 text-center text-3xl font-bold text-white">
-                    Invest In Stage
-                </h1>
+                <h2 className="mb-5 text-lg font-semibold text-white">
+                    Investment Details
+                </h2>
 
                 <form
                     onSubmit={handleInvest}
@@ -93,33 +108,68 @@ const Invest = () => {
                     <div>
 
                         <label className="mb-2 block text-sm font-medium text-zinc-300">
-                            Number Of Slots
+                            Number of Slots
                         </label>
 
                         <input
                             type="number"
-                            required
                             min="1"
+                            required
                             value={slotsToBuy}
                             onChange={(e) =>
                                 setSlotsToBuy(e.target.value)
                             }
-                            placeholder="Enter slots"
-                            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none focus:border-red-500"
+                            placeholder="Enter number of slots"
+                            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-red-500"
                         />
 
                     </div>
 
+                    {/* Investment Preview */}
+
+                    {movie && slotsToBuy && Number(slotsToBuy) > 0 && (
+
+                        <div className="rounded-xl border border-green-500/20 bg-green-500/10 p-4">
+
+                            <h3 className="mb-2 text-sm font-semibold text-green-400">
+                                Investment Summary
+                            </h3>
+
+                            <div className="space-y-2 text-sm text-zinc-300">
+
+                                <div className="flex justify-between">
+                                    <span>Slots</span>
+                                    <span>{slotsToBuy}</span>
+                                </div>
+
+                                <div className="flex justify-between">
+                                    <span>Price Per Slot</span>
+                                    <span>₹{movie.slotPrice}</span>
+                                </div>
+
+                                <div className="flex justify-between border-t border-green-500/20 pt-2 font-semibold text-white">
+                                    <span>Total Investment</span>
+                                    <span>
+                                        ₹
+                                        {Number(slotsToBuy) *
+                                            Number(movie.slotPrice)}
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    )}
+
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full rounded-xl bg-red-600 px-4 py-3 font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+                        className="w-full rounded-xl bg-red-600 py-3 font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-
                         {isLoading
-                            ? 'Processing...'
-                            : 'Confirm Investment'}
-
+                            ? "Processing Investment..."
+                            : "Confirm Investment"}
                     </button>
 
                 </form>

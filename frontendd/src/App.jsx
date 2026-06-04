@@ -3,6 +3,8 @@ import {
   Routes,
   Route,
 } from 'react-router-dom';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Navbar from './components/Navbar';
 
@@ -10,78 +12,85 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Invest from './pages/Invest';
-import {MovieDetails} from './pages/MovieDetails';
+import { MovieDetails } from './pages/MovieDetails';
 import CreateStage from './pages/CreateStage';
-import {StageDetails} from './pages/StageDetails';
+import { StageDetails } from './pages/StageDetails';
 import AdminDashboard from './pages/AdminDashboard';
-import {Investors} from './pages/Investors';
+import { Investors } from './pages/Investors';
 
 function App() {
 
   return (
+    <>
 
-    <Router>
+      <ToastContainer position="top-right" autoClose={2000} toastStyle={{
+        fontSize: "14px", minHeight: "40px", padding: "8px 12px", width: "280px",
+      }}
+      />
 
-      <div className="min-h-screen bg-zinc-950 text-white">
+      <Router>
 
-        <Navbar />
+        <div className="min-h-screen bg-zinc-950 text-white">
 
-        <main className="px-4 md:px-8 py-6">
+          <Navbar />
 
-          <Routes>
+          <main className="px-4 md:px-8 py-6">
 
-            <Route
-              path="/"
-              element={<Home />}
-            />
+            <Routes>
 
-            <Route
-              path="/login"
-              element={<Login />}
-            />
+              <Route
+                path="/"
+                element={<Home />}
+              />
 
-            <Route
-              path="/dashboard"
-              element={<Dashboard />}
-            />
+              <Route
+                path="/login"
+                element={<Login />}
+              />
 
-            <Route
-              path="/invest/:stageId/:movieId"
-              element={<Invest />}
-            />
+              <Route
+                path="/dashboard"
+                element={<Dashboard />}
+              />
 
-            <Route
-              path="/movie/:movieId"
-              element={<MovieDetails />}
-            />
+              <Route
+                path="/invest/:stageId/:movieId"
+                element={<Invest />}
+              />
 
-            <Route
-              path="/movies/:movieId/create-stage"
-              element={<CreateStage />}
-            />
+              <Route
+                path="/movie/:movieId"
+                element={<MovieDetails />}
+              />
 
-            <Route
-              path = "/movie/stageDetails/:movieId"
-              element={<StageDetails />}
-            />
+              <Route
+                path="/movies/:movieId/create-stage"
+                element={<CreateStage />}
+              />
 
-            <Route
-              path="/admin"
-              element={<AdminDashboard />}
-            />
+              <Route
+                path="/movie/stageDetails/:movieId"
+                element={<StageDetails />}
+              />
 
-            <Route
-              path="/movie/investorDetails/:movieId"
-              element={<Investors />}
-            />
+              <Route
+                path="/admin"
+                element={<AdminDashboard />}
+              />
 
-          </Routes>
+              <Route
+                path="/movie/investorDetails/:movieId"
+                element={<Investors />}
+              />
 
-        </main>
+            </Routes>
 
-      </div>
+          </main>
 
-    </Router>
+        </div>
+
+      </Router>
+    </>
   );
 }
 

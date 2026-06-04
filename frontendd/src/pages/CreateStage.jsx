@@ -83,32 +83,45 @@ const CreateStage = () => {
     };
 
     return (
+        <div className="mx-auto max-w-4xl px-4 py-5">
 
-        <div className="flex min-h-[80vh] items-center justify-center px-4">
+            {/* Header */}
+            <div className="mb-4 flex items-center justify-between">
 
-            <div className="w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-900 p-8 shadow-2xl">
+                <div>
 
-                <h1 className="mb-6 text-center text-3xl font-bold text-white">
-                    Create Investment Stage
-                </h1>
+                    <h1 className="text-xl font-bold text-white">
+                        Create Investment Stage
+                    </h1>
 
-                {movie && (
-                    <div className="mb-6 rounded-xl bg-zinc-800 p-4 text-sm text-zinc-300">
-                        <p>
-                            <strong>Movie:</strong> {movie.title}
-                        </p>
+                    <p className="mt-1 text-xs text-zinc-400">
+                        Add a new funding stage for your movie
+                    </p>
 
-                        <p>
-                            <strong>Slot Price:</strong> ₹{movie.slotPrice}
-                        </p>
-                    </div>
-                )}
+                </div>
+
+                <button
+                    onClick={() => navigate(-1)}
+                    className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white transition hover:border-red-500 hover:text-red-400"
+                >
+                    ← Back
+                </button>
+
+            </div>
+
+            {/* Form */}
+            <div className="rounded-xl border border-zinc-800 bg-zinc-900/80 p-5 shadow-lg backdrop-blur">
+
+                <h2 className="mb-4 text-base font-semibold text-white">
+                    Stage Information
+                </h2>
 
                 <form
                     onSubmit={handleSubmit}
-                    className="space-y-5"
+                    className="space-y-4"
                 >
 
+                    {/* Stage Name */}
                     <div>
 
                         <label className="mb-2 block text-sm font-medium text-zinc-300">
@@ -121,60 +134,91 @@ const CreateStage = () => {
                                 setStageName(e.target.value)
                             }
                             required
-                            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none focus:border-purple-500"
+                            className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white outline-none transition focus:border-purple-500"
                         >
                             <option value="">
                                 Select Stage
                             </option>
 
                             <option value="PRE_PRODUCTION">
-                                Pre Production
+                                🎬 Pre Production
                             </option>
 
                             <option value="PRODUCTION">
-                                Production
+                                🎥 Production
                             </option>
 
                             <option value="POST_PRODUCTION">
-                                Post Production
+                                ✂️ Post Production
                             </option>
 
                             <option value="MARKETING_DISTRIBUTION">
-                                Marketing & Distribution
+                                📢 Marketing & Distribution
                             </option>
 
                         </select>
 
                     </div>
 
+                    {/* Amount */}
                     <div>
 
                         <label className="mb-2 block text-sm font-medium text-zinc-300">
-                            Stage Amount (₹)
+                            Stage Budget (₹)
                         </label>
 
                         <input
                             type="number"
-                            required
                             min="1"
+                            required
                             value={amount}
                             onChange={(e) =>
                                 setAmount(e.target.value)
                             }
-                            placeholder="Enter stage budget"
-                            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none focus:border-purple-500"
+                            placeholder="Enter stage amount"
+                            className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white outline-none transition focus:border-purple-500"
                         />
 
                     </div>
 
+                    {/* Rules */}
+                    {movie && (
+
+                        <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3">
+
+                            <h3 className="mb-2 text-sm font-semibold text-yellow-400">
+                                Validation Rules
+                            </h3>
+
+                            <ul className="space-y-1 text-xs text-zinc-300">
+
+                                <li>
+                                    • Amount must be greater than ₹{movie.slotPrice}
+                                </li>
+
+                                <li>
+                                    • Amount must be divisible by ₹{movie.slotPrice}
+                                </li>
+
+                                <li>
+                                    • Investors purchase slots based on this budget
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+                    )}
+
+                    {/* Submit */}
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full rounded-xl bg-purple-600 px-4 py-3 font-semibold text-white transition hover:bg-purple-700 disabled:opacity-60"
+                        className="w-full rounded-lg bg-purple-600 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {isLoading
-                            ? 'Creating...'
-                            : 'Create Stage'}
+                            ? "Creating Stage..."
+                            : "Create Stage"}
                     </button>
 
                 </form>

@@ -149,6 +149,26 @@ public class MovieController {
                 "Role Updated successfully"
         );
 
+        return ResponseEntity.ok(response);	
+    }
+    
+    
+//    Deleting the movie
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete/{movieId}")
+    public ResponseEntity<?> deleteMovie(
+            @PathVariable Long movieId
+    ) {
+
+        movieService.deleteMovieById(movieId);
+
+        HashMap<String, String> response = new HashMap<>();
+
+        response.put(
+                "message",
+                "Movie Deleted Successfully"
+        );
+
         return ResponseEntity.ok(response);
     }
-}
+ }

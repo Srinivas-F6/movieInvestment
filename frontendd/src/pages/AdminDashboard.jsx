@@ -8,6 +8,8 @@ import {
     useHideMovieMutation,
     useUnhideMovieMutation,
     useUpdateUserRoleMutation,
+    useDeleteMovieMutation,
+    useDeleteStageMutation,
 } from '../store/apiSlice';
 
 const AdminDashboard = () => {
@@ -66,6 +68,9 @@ const AdminDashboard = () => {
 
             else if (status === 'UNHIDE') {
                 alert('Movie unhidden successfully');
+            }
+            else if (status === 'PENDING') {
+                alert('Movie marked as pending');
             }
 
         } catch (err) {
@@ -153,6 +158,60 @@ const AdminDashboard = () => {
         }
     };
 
+    // ================= DELETE MOVIE =================
+
+    const [deleteMovie] = useDeleteMovieMutation();
+
+    const handleDelete = async (movieId) => {
+
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this movie? This action cannot be undone."
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            await deleteMovie(movieId).unwrap();
+
+            alert("Movie deleted successfully");
+
+        } catch (error) {
+
+            alert("Failed to delete movie");
+        }
+    };
+
+
+    //  ================= DELETE STAGE =================
+
+    const [deleteStage] = useDeleteStageMutation();
+
+    const handleDeleteStage = async (stageId) => {
+
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this stage?"
+        );
+
+        if (!confirmed) return;
+
+        try {
+
+            await deleteStage(stageId).unwrap();
+
+            alert("Stage deleted successfully");
+
+        } catch (error) {
+
+            alert(
+                error?.data?.message ||
+                "Failed to delete stage"
+            );
+        }
+    };
+
     // ================= LOADING =================
 
     if (isLoading) {
@@ -183,19 +242,19 @@ const AdminDashboard = () => {
 
     return (
 
-        <div className="min-h-screen bg-black px-6 py-10 text-white">
+        <div className="min-h-screen bg-black px-4 py-6 text-white">
 
             {/* HEADER */}
 
-            <div className="mb-10 flex items-center justify-between">
+            <div className="mb-6 flex items-center justify-between">
 
                 <div>
 
-                    <h1 className="text-4xl font-extrabold">
+                    <h1 className="text-3xl font-extrabold">
                         Admin Dashboard
                     </h1>
 
-                    <p className="mt-2 text-zinc-400">
+                    <p className="mt-1 text-sm text-zinc-400">
                         Manage movies and investment stages
                     </p>
 
@@ -203,47 +262,46 @@ const AdminDashboard = () => {
 
                 <button
                     onClick={() => navigate('/')}
-                    className="rounded-xl bg-zinc-800 px-5 py-3 font-semibold transition hover:bg-zinc-700"
+                    className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white transition hover:border-red-500 hover:text-red-400"
                 >
-                    Back Home
+                    ← Back
                 </button>
 
             </div>
 
             {/* SEARCH BAR */}
-            <div className="mb-10 rounded-3xl border border-zinc-800 bg-zinc-900 p-6">
+            <div className="mb-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
 
-                <h2 className="mb-5 text-2xl font-bold">
+                <h2 className="mb-3 text-lg font-bold">
                     Update User Role
                 </h2>
 
-                <div className="flex flex-col gap-4 lg:flex-row">
+                <div className="flex flex-col gap-3 lg:flex-row">
 
+                    {/* INPUT */}
                     <input
                         type="email"
                         placeholder="Enter user email"
                         value={email}
-                        onChange={(e) =>
-                            setEmail(e.target.value)
-                        }
-                        className="flex-1 rounded-2xl border border-zinc-700 bg-black px-5 py-4 text-white outline-none focus:border-red-500"
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="flex-1 rounded-xl border border-zinc-700 bg-black px-3 py-2 text-sm text-white outline-none focus:border-red-500"
                     />
 
+                    {/* SELECT */}
                     <select
                         value={role}
-                        onChange={(e) =>
-                            setRole(e.target.value)
-                        }
-                        className="rounded-2xl border border-zinc-700 bg-black px-5 py-4 text-white outline-none"
+                        onChange={(e) => setRole(e.target.value)}
+                        className="rounded-xl border border-zinc-700 bg-black px-3 py-2 text-sm text-white outline-none"
                     >
                         <option value="USER">USER</option>
                         <option value="PRODUCER">PRODUCER</option>
                         <option value="ADMIN">ADMIN</option>
                     </select>
 
+                    {/* BUTTON */}
                     <button
                         onClick={handleRoleUpdate}
-                        className="rounded-2xl bg-red-600 px-6 py-4 font-semibold transition hover:bg-red-700"
+                        className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold transition hover:bg-red-700"
                     >
                         Update Role
                     </button>
@@ -252,7 +310,7 @@ const AdminDashboard = () => {
 
             </div>
 
-            <div className="mb-8">
+            <div className="mb-6">
 
                 <input
                     type="text"
@@ -261,14 +319,14 @@ const AdminDashboard = () => {
                     onChange={(e) =>
                         setSearch(e.target.value)
                     }
-                    className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-white outline-none transition focus:border-red-500"
+                    className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white outline-none transition focus:border-red-500"
                 />
 
             </div>
 
             {/* MOVIES */}
 
-            <div className="space-y-8">
+            <div className="space-y-5">
 
                 {filteredMovies?.length > 0 ? (
 
@@ -276,28 +334,30 @@ const AdminDashboard = () => {
 
                         <div
                             key={movie.id}
-                            className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6 shadow-xl"
+                            className="rounded-3xl border border-zinc-800 bg-zinc-900 p-4 shadow-xl"
                         >
 
                             {/* MOVIE HEADER */}
 
-                            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
 
-                                <div>
+                                {/* LEFT SIDE */}
+                                <div className="flex-1">
 
-                                    <div className="flex items-center gap-3">
+                                    {/* TITLE + STATUS */}
+                                    <div className="flex flex-wrap items-center gap-2">
 
-                                        <h2 className="text-3xl font-bold">
+                                        <h2 className="text-2xl font-bold text-white">
                                             {movie.title}
                                         </h2>
 
                                         <span
-                                            className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide
-                                                     ${movie.status === 'APPROVED'
-                                                    ? 'bg-green-500/20 text-green-400'
+                                            className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide
+                                                      ${movie.status === 'APPROVED'
+                                                    ? 'bg-green-500/15 text-green-400'
                                                     : movie.status === 'REJECTED'
-                                                        ? 'bg-red-500/20 text-red-400'
-                                                        : 'bg-yellow-500/20 text-yellow-400'
+                                                        ? 'bg-red-500/15 text-red-400'
+                                                        : 'bg-yellow-500/15 text-yellow-400'
                                                 }`}
                                         >
                                             {movie.status}
@@ -305,93 +365,72 @@ const AdminDashboard = () => {
 
                                     </div>
 
-                                    <p className="mt-2 text-zinc-400">
-                                        {movie.description}
-                                    </p>
-                                    <div className="mt-2">
-                                            <button
-                                                onClick={() =>
-                                                    navigate(`/movie/${movie.id}`)
-                                                }
-                                                className="flex-1 rounded-xl border border-zinc-700 bg-red-500 px-4 py-3 font-semibold text-white transition hover:bg-red-700"
-                                            >
-                                                Movie Details
-                                            </button>
+                                    {/* PRIMARY ACTIONS */}
+                                    <div className="mt-4 flex flex-wrap gap-2">
 
-                                        </div>
+                                        <button
+                                            onClick={() => navigate(`/movie/${movie.id}`)}
+                                            className="rounded-lg border border-zinc-700 bg-red-600/90 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700"
+                                        >
+                                            Movie Details
+                                        </button>
+
+                                        <button
+                                            onClick={() => handleDelete(movie.id)}
+                                            className="rounded-lg border border-red-800 bg-zinc-900 px-3 py-2 text-xs font-semibold text-red-400 transition hover:bg-red-950/40"
+                                        >
+                                            Delete Movie
+                                        </button>
+
+                                    </div>
 
                                 </div>
 
-
-                                {/* MOVIE ACTIONS */}
-
-                                <div className="flex gap-3">
-
-                                    {/* APPROVE */}
+                                {/* RIGHT SIDE ACTIONS */}
+                                <div className="flex flex-wrap gap-2 lg:justify-end">
 
                                     <button
                                         disabled={movie.status === 'APPROVED'}
-                                        onClick={() =>
-                                            handleMovieStatus(
-                                                movie.id,
-                                                'APPROVED'
-                                            )
-                                        }
-                                        className={`rounded-xl px-5 py-3 font-semibold transition
-                                                ${movie.status === 'APPROVED'
-                                                ? 'cursor-not-allowed bg-zinc-600 text-zinc-400'
-                                                : 'bg-green-600 hover:bg-green-700'
+                                        onClick={() => handleMovieStatus(movie.id, 'APPROVED')}
+                                        className={`rounded-lg px-3 py-2 text-xs font-semibold transition
+                                                 ${movie.status === 'APPROVED'
+                                                ? 'cursor-not-allowed bg-green-700 text-white'
+                                                : 'bg-green-600 hover:bg-green-700 text-white'
                                             }`}
                                     >
                                         Approve
                                     </button>
 
-                                    {/* REJECT */}
-
                                     <button
                                         disabled={movie.status === 'REJECTED'}
-                                        onClick={() =>
-                                            handleMovieStatus(
-                                                movie.id,
-                                                'REJECTED'
-                                            )
-                                        }
-                                        className={`rounded-xl px-5 py-3 font-semibold transition
-                                                  ${movie.status === 'REJECTED'
-                                                ? 'cursor-not-allowed bg-zinc-600 text-zinc-400'
-                                                : 'bg-red-600 hover:bg-red-700'
+                                        onClick={() => handleMovieStatus(movie.id, 'REJECTED')}
+                                        className={`rounded-lg px-3 py-2 text-xs font-semibold transition
+                ${movie.status === 'REJECTED'
+                                                ? 'cursor-not-allowed bg-red-700 text-white'
+                                                : 'bg-red-600 hover:bg-red-700 text-white'
                                             }`}
                                     >
                                         Reject
                                     </button>
 
-                                    {/* PENDING */}
-
                                     <button
                                         disabled={movie.status === 'PENDING'}
-                                        onClick={() =>
-                                            handleMovieStatus(
-                                                movie.id,
-                                                'PENDING'
-                                            )
-                                        }
-                                        className={`rounded-xl px-5 py-3 font-semibold transition
-                                                ${movie.status === 'PENDING'
-                                                ? 'cursor-not-allowed bg-zinc-600 text-zinc-400'
-                                                : 'bg-yellow-600 hover:bg-yellow-700'
+                                        onClick={() => handleMovieStatus(movie.id, 'PENDING')}
+                                        className={`rounded-lg px-3 py-2 text-xs font-semibold transition
+                ${movie.status === 'PENDING'
+                                                ? 'cursor-not-allowed bg-yellow-700 text-white'
+                                                : 'bg-yellow-600 hover:bg-yellow-700 text-white'
                                             }`}
                                     >
                                         Pending
                                     </button>
 
-                                    {/* HIDE / UNHIDE */}
-
                                     <button
                                         onClick={() => handleHideToggle(movie)}
-                                        className={`rounded-xl px-5 py-3 font-semibold transition
+                                        className={`rounded-lg px-3 py-2 text-xs font-semibold transition
                                                  ${movie.hidden
-                                                ? 'bg-blue-600 hover:bg-blue-700'
-                                                : 'bg-zinc-700 hover:bg-zinc-600'
+                                                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                                : 'bg-cyan-700 hover:bg-cyan-600 text-white'
                                             }`}
                                     >
                                         {movie.hidden ? 'Unhide' : 'Hide'}
@@ -403,70 +442,56 @@ const AdminDashboard = () => {
 
                             {/* STAGES */}
 
-                            <div className="mt-8 overflow-x-auto rounded-2xl border border-zinc-800">
+                            <div className="mt-6 overflow-x-auto rounded-xl border border-zinc-800">
 
-                                <table className="min-w-full text-left text-sm">
+                                <table className="min-w-full text-left text-xs">
 
-                                    <thead className="bg-zinc-800 text-zinc-200">
+                                    {/* HEADER */}
+                                    <thead className="bg-zinc-800/60 text-zinc-300">
 
                                         <tr>
 
-                                            <th className="px-5 py-4">
-                                                Stage
-                                            </th>
-
-                                            <th className="px-5 py-4">
-                                                Amount
-                                            </th>
-
-                                            <th className="px-5 py-4">
-                                                Collected
-                                            </th>
-
-                                            <th className="px-5 py-4">
-                                                Status
-                                            </th>
-
-                                            <th className="px-5 py-4">
-                                                Actions
-                                            </th>
+                                            <th className="px-4 py-3 font-semibold">Stage</th>
+                                            <th className="px-4 py-3 font-semibold">Amount</th>
+                                            <th className="px-4 py-3 font-semibold">Collected</th>
+                                            <th className="px-4 py-3 font-semibold">Status</th>
+                                            <th className="px-4 py-3 font-semibold">Actions</th>
 
                                         </tr>
 
                                     </thead>
 
+                                    {/* BODY */}
                                     <tbody>
 
                                         {movie.stages?.map((stage) => (
 
                                             <tr
                                                 key={stage.id}
-                                                className="border-t border-zinc-800"
+                                                className="border-t border-zinc-800/60 hover:bg-zinc-800/20 transition"
                                             >
 
-                                                <td className="px-5 py-4">
+                                                <td className="px-4 py-3 font-medium text-white">
                                                     {stage.stageName}
                                                 </td>
 
-                                                <td className="px-5 py-4">
-                                                    $
-                                                    {stage.stageAmount}
+                                                <td className="px-4 py-3 text-zinc-300">
+                                                    ${stage.stageAmount}
                                                 </td>
 
-                                                <td className="px-5 py-4">
-                                                    $
-                                                    {stage.collectedAmount}
+                                                <td className="px-4 py-3 text-zinc-300">
+                                                    ${stage.collectedAmount}
                                                 </td>
 
-                                                <td className="px-5 py-4">
+                                                <td className="px-4 py-3">
 
                                                     <span
-                                                        className={`rounded-full px-3 py-1 text-xs font-bold
-                                                        ${stage.status === 'COMPLETED'
-                                                                ? 'bg-green-500/20 text-green-400'
+                                                        className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase
+                                                                  ${stage.status === 'COMPLETED'
+                                                                ? 'bg-green-500/15 text-green-400'
                                                                 : stage.status === 'ACTIVE'
-                                                                    ? 'bg-blue-500/20 text-blue-400'
-                                                                    : 'bg-yellow-500/20 text-yellow-400'
+                                                                    ? 'bg-blue-500/15 text-blue-400'
+                                                                    : 'bg-yellow-500/15 text-yellow-400'
                                                             }`}
                                                     >
                                                         {stage.status}
@@ -474,11 +499,9 @@ const AdminDashboard = () => {
 
                                                 </td>
 
-                                                <td className="px-5 py-4">
+                                                <td className="px-4 py-3">
 
-                                                    <div className="flex gap-2">
-
-                                                        {/* ACTIVATE */}
+                                                    <div className="flex flex-wrap gap-2">
 
                                                         <button
                                                             disabled={
@@ -486,22 +509,16 @@ const AdminDashboard = () => {
                                                                 stage.status === 'COMPLETED'
                                                             }
                                                             onClick={() =>
-                                                                handleStageStatus(
-                                                                    stage.id,
-                                                                    'ACTIVE'
-                                                                )
+                                                                handleStageStatus(stage.id, 'ACTIVE')
                                                             }
-                                                            className={`rounded-lg px-3 py-2 text-xs font-semibold transition
-                                                                    ${stage.status === 'ACTIVE' ||
-                                                                    stage.status === 'COMPLETED'
-                                                                    ? 'cursor-not-allowed bg-zinc-600 text-zinc-400'
-                                                                    : 'bg-blue-600 hover:bg-blue-700'
+                                                            className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition
+                                                                    ${stage.status === 'ACTIVE' || stage.status === 'COMPLETED'
+                                                                    ? 'cursor-not-allowed bg-blue-700 text-white'
+                                                                    : 'bg-blue-600 hover:bg-blue-700 text-white'
                                                                 }`}
                                                         >
                                                             Activate
                                                         </button>
-
-                                                        {/* HOLD */}
 
                                                         <button
                                                             disabled={
@@ -509,19 +526,23 @@ const AdminDashboard = () => {
                                                                 stage.status === 'COMPLETED'
                                                             }
                                                             onClick={() =>
-                                                                handleStageStatus(
-                                                                    stage.id,
-                                                                    'HOLD'
-                                                                )
+                                                                handleStageStatus(stage.id, 'HOLD')
                                                             }
-                                                            className={`rounded-lg px-3 py-2 text-xs font-semibold transition
-                                                                    ${stage.status === 'HOLD' ||
+                                                            className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition
+                                    ${stage.status === 'HOLD' ||
                                                                     stage.status === 'COMPLETED'
-                                                                    ? 'cursor-not-allowed bg-zinc-600 text-zinc-400'
-                                                                    : 'bg-red-600 hover:bg-red-700'
+                                                                    ? 'cursor-not-allowed bg-red-700 text-white'
+                                                                    : 'bg-red-600 hover:bg-red-700 text-white'
                                                                 }`}
                                                         >
                                                             Hold
+                                                        </button>
+
+                                                        <button
+                                                            onClick={() => handleDeleteStage(stage.id)}
+                                                            className="rounded-lg  px-2.5 py-1 text-[11px] font-semibold border border-red-800 bg-zinc-900 text-red-500  transition"
+                                                        >
+                                                            Delete
                                                         </button>
 
                                                     </div>

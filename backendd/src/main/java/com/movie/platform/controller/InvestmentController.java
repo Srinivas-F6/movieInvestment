@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -88,6 +89,22 @@ public class InvestmentController {
     	 return ResponseEntity.ok(
     			 investmentService.updateStageStatus(stageId, status));
      }
+    
+    // Delete stage from the movie
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/stages/{stageId}")
+    public ResponseEntity<?> deleteStage(
+            @PathVariable Long stageId
+    ) {
+
+        investmentService.deleteStage(stageId);
+        HashMap<String, String> map = new HashMap<>();
+        map.put("Message","Stage Deleted Successfully");
+
+        return ResponseEntity.ok(map);
+    }
+    
+    	
     
     
     

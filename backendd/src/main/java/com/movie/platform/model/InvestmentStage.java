@@ -50,5 +50,5 @@ public class InvestmentStage {
         ACTIVE,
         HOLD,
         COMPLETED
-    }
+    }	
 }

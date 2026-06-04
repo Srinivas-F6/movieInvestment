@@ -178,9 +178,29 @@ public class InvestmentService {
 		stage.setStatus(status);
 	    investmentStageRepository.save(stage);
 		return stage;
-				                
-		
+				                	
 	}
+	
+	
+//	Delete Stage from the movie
+	@Transactional
+	public void deleteStage(Long stageId) {
+
+	    InvestmentStage stage = investmentStageRepository
+	            .findById(stageId)
+	            .orElseThrow(() ->
+	                    new RuntimeException("Stage not found"));
+	    boolean hasInvestments =
+	            investmentRepository.existsByStageId(stageId);
+
+	    if (hasInvestments) {
+	        throw new RuntimeException(
+	                "Cannot delete stage because investments exist"
+	        );
+	    }
+	    investmentStageRepository.delete(stage);
+	}
+	
     
     
     

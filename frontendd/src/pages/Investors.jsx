@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetInvestmentsForMovieQuery } from "../store/apiSlice";
+import {useNavigate} from "react-router-dom";
 
 export function Investors() {
 
     const { movieId } = useParams();
+    const navigate = useNavigate();
 
     const {
         data: investments = [],
@@ -18,11 +20,11 @@ export function Investors() {
     const [selectedStage, setSelectedStage] = useState("ALL");
 
     const stages = [
-    "ALL",
-    ...new Set(
-        investments.map(inv => inv.stage.stageName)
-    )
-];
+        "ALL",
+        ...new Set(
+            investments.map(inv => inv.stage.stageName)
+        )
+    ];
 
     const filteredInvestments = useMemo(() => {
         return investments.filter(inv => {
@@ -52,106 +54,150 @@ export function Investors() {
     }
 
     return (
-        <div className="min-h-screen bg-zinc-950 p-8 text-white">
+        <div className="mx-auto max-w-6xl px-4 py-6">
 
-            <h1 className="mb-8 text-3xl font-bold">
-                Investors
-            </h1>
+            {/* Header */}
 
-            {/* FILTERS */}
+            <div className="mb-6 flex items-center justify-between">
 
-            <div className="mb-6 flex flex-wrap gap-4">
+                <div>
 
-                <input
-                    type="text"
-                    placeholder="Search by name or email..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2"
-                />
+                    <h1 className="text-2xl font-bold text-white">
+                        Investors
+                    </h1>
 
-                <select
-                    value={selectedStage}
-                    onChange={(e) => setSelectedStage(e.target.value)}
-                    className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2"
+                    <p className="mt-1 text-sm text-zinc-400">
+                        View and manage movie investors
+                    </p>
+
+                </div>
+
+                <button
+                    onClick={() => navigate(-1)}
+                    className="rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:border-red-500 hover:text-red-400"
                 >
-                    {stages.map(stage => (
-                        <option key={stage} value={stage}>
-                            {stage}
-                        </option>
-                    ))}
-                </select>
+                    ← Back
+                </button>
 
             </div>
 
-            {/* TABLE */}
+            {/* Filters */}
 
-            <div className="overflow-hidden rounded-xl border border-zinc-800">
+            <div className="mb-6 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4 shadow-lg backdrop-blur">
 
-                <table className="w-full">
+                <div className="flex flex-col gap-4 md:flex-row">
 
-                    <thead className="bg-zinc-900">
+                    <input
+                        type="text"
+                        placeholder="Search by name or email..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="flex-1 rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none transition focus:border-red-500"
+                    />
 
-                    <tr>
-                        <th className="px-5 py-4 text-left">
-                            Investor
-                        </th>
+                    <select
+                        value={selectedStage}
+                        onChange={(e) => setSelectedStage(e.target.value)}
+                        className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none transition focus:border-red-500"
+                    >
+                        {stages.map((stage) => (
+                            <option key={stage} value={stage}>
+                                {stage}
+                            </option>
+                        ))}
+                    </select>
 
-                        <th className="px-5 py-4 text-left">
-                            Email
-                        </th>
+                </div>
 
-                        <th className="px-5 py-4 text-left">
-                            Stage
-                        </th>
+            </div>
 
-                        <th className="px-5 py-4 text-left">
-                            Slots
-                        </th>
+            {/* Investors Table */}
 
-                        <th className="px-5 py-4 text-left">
-                            Amount
-                        </th>
-                    </tr>
+            <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/80 shadow-lg backdrop-blur">
 
-                    </thead>
+                <div className="border-b border-zinc-800 px-6 py-4">
 
-                    <tbody>
+                    <h2 className="text-lg font-semibold text-white">
+                        Investor List
+                    </h2>
 
-                    {filteredInvestments.map(inv => (
+                </div>
 
-                        <tr
-                            key={inv.investmentId}
-                            className="border-t border-zinc-800"
-                        >
+                <div className="overflow-x-auto">
 
-                            <td className="px-5 py-4">
-                                {inv.investorName}
-                            </td>
+                    <table className="w-full">
 
-                            <td className="px-5 py-4">
-                                {inv.investorEmail}
-                            </td>
+                        <thead className="bg-zinc-800/50">
 
-                            <td className="px-5 py-4">
-                                {inv.stage.stageName}
-                            </td>
+                            <tr className="text-left text-sm text-zinc-300">
 
-                            <td className="px-5 py-4">
-                                {inv.slotsToBuy}
-                            </td>
+                                <th className="px-6 py-4">Investor</th>
+                                <th className="px-6 py-4">Email</th>
+                                <th className="px-6 py-4">Stage</th>
+                                <th className="px-6 py-4">Slots</th>
+                                <th className="px-6 py-4">Amount</th>
 
-                            <td className="px-5 py-4">
-                                ₹{inv.amount}
-                            </td>
+                            </tr>
 
-                        </tr>
+                        </thead>
 
-                    ))}
+                        <tbody>
 
-                    </tbody>
+                            {filteredInvestments.map((inv) => (
 
-                </table>
+                                <tr
+                                    key={inv.investmentId}
+                                    className="border-t border-zinc-800 hover:bg-zinc-800/20"
+                                >
+
+                                    <td className="px-6 py-4 font-medium text-white">
+                                        {inv.investorName}
+                                    </td>
+
+                                    <td className="px-6 py-4 text-zinc-300">
+                                        {inv.investorEmail}
+                                    </td>
+
+                                    <td className="px-6 py-4">
+
+                                        <span className="rounded-full bg-purple-500/10 px-3 py-1 text-xs font-semibold text-purple-400">
+                                            {inv.stage.stageName}
+                                        </span>
+
+                                    </td>
+
+                                    <td className="px-6 py-4 text-zinc-300">
+                                        {inv.slotsToBuy}
+                                    </td>
+
+                                    <td className="px-6 py-4 font-semibold text-green-400">
+                                        ₹{inv.amount}
+                                    </td>
+
+                                </tr>
+
+                            ))}
+
+                            {filteredInvestments.length === 0 && (
+
+                                <tr>
+
+                                    <td
+                                        colSpan={5}
+                                        className="px-6 py-10 text-center text-zinc-500"
+                                    >
+                                        No investors found.
+                                    </td>
+
+                                </tr>
+
+                            )}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
             </div>
 

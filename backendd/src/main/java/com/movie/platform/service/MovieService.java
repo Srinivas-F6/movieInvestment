@@ -188,4 +188,9 @@ public class MovieService {
 
         userRepository.save(user);
     }
+    
+//    Delete the movie
+    public void deleteMovieById(Long movieId) {
+    	movieRepository.deleteById(movieId);
+    }
 }

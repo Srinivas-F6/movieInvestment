@@ -21,6 +21,8 @@ export function StageDetails() {
         isLoading,
         isError,
     } = useGetStagesByMovieQuery(movieId);
+    console.log(isLoading);
+    console.log(isError);
 
     // MOVIE QUERY
     const {
@@ -39,206 +41,170 @@ export function StageDetails() {
 
     // LOADING
     if (isLoading || movieLoading) {
-
         return (
-
-            <div className="flex min-h-screen items-center justify-center bg-black">
-
-                <div className="h-14 w-14 animate-spin rounded-full border-4 border-red-500 border-t-transparent" />
-
+            <div className="flex min-h-screen items-center justify-center bg-zinc-950">
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-red-500 border-t-transparent" />
             </div>
         );
     }
 
-    // ERROR
     if (isError || movieError) {
-
         return (
-
-            <div className="flex min-h-screen items-center justify-center bg-black text-white">
-
-                Failed to load data.
-
+            <div className="flex min-h-screen items-center justify-center bg-zinc-950">
+                <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-400">
+                    Failed to load data.
+                </div>
             </div>
         );
     }
 
     return (
+        <div className="mx-auto max-w-5xl px-4 py-5">
 
-        <div className="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black px-4 py-10 text-white">
+            {/* Header */}
+            <div className="mb-4 flex items-center justify-between">
 
-            <div className="mx-auto max-w-6xl">
+                <div>
+                    <h1 className="text-xl font-bold text-white">
+                        Stage Details
+                    </h1>
 
-                {/* HEADER */}
+                    <p className="mt-1 text-xs text-zinc-400">
+                        Manage and track movie investment stages
+                    </p>
+                </div>
 
-                <div className="mb-8 flex items-center justify-between">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white transition hover:border-red-500 hover:text-red-400"
+                >
+                    ← Back
+                </button>
 
-                    <div>
+            </div>
 
-                        <h1 className="text-4xl font-extrabold">
-                            Stage Details
-                        </h1>
+            {/* Card */}
+            <div className="rounded-xl border border-zinc-800 bg-zinc-900/80 shadow-lg backdrop-blur">
 
-                        <p className="mt-2 text-zinc-400">
-                            Manage and track movie investment stages
-                        </p>
+                <div className="border-b border-zinc-800 px-4 py-3">
 
-                    </div>
-
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="rounded-xl border border-zinc-700 bg-zinc-900 px-5 py-2 font-semibold text-white transition hover:border-red-500 hover:bg-red-600/10"
-                    >
-                        ← Back
-                    </button>
+                    <h2 className="text-base font-semibold text-white">
+                        Investment Stages
+                    </h2>
 
                 </div>
 
-                {/* TABLE CARD */}
+                <div className="overflow-x-auto">
 
-                <div className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/70 shadow-2xl backdrop-blur-md">
+                    <table className="w-full text-sm">
 
-                    <div className="border-b border-zinc-800 px-6 py-5">
+                        <thead className="bg-zinc-800/50">
 
-                        <h2 className="text-xl font-bold text-white">
-                            Investment Stages
-                        </h2>
+                            <tr className="text-left text-xs uppercase tracking-wide text-zinc-400">
 
-                    </div>
+                                <th className="px-4 py-3">Stage</th>
+                                <th className="px-4 py-3">Amount</th>
+                                <th className="px-4 py-3">Collected</th>
+                                <th className="px-4 py-3">Slots Left</th>
+                                <th className="px-4 py-3">Status</th>
+                                <th className="px-4 py-3">Action</th>
 
-                    {/* TABLE */}
+                            </tr>
 
-                    <div className="overflow-x-auto">
+                        </thead>
 
-                        <table className="min-w-full text-left text-sm">
+                        <tbody>
 
-                            <thead className="bg-zinc-800/80 text-zinc-200">
+                            {stages?.map((stage) => {
 
-                                <tr>
+                                const remaining =
+                                    Number(stage.stageAmount) -
+                                    Number(stage.collectedAmount || 0);
 
-                                    <th className="px-6 py-4 font-semibold">
-                                        Stage Name
-                                    </th>
+                                const remainingSlots =
+                                    movie?.slotPrice
+                                        ? Math.floor(
+                                            remaining / movie.slotPrice
+                                        )
+                                        : 0;
 
-                                    <th className="px-6 py-4 font-semibold">
-                                        Stage Amount
-                                    </th>
+                                return (
+                                    <tr
+                                        key={stage.id}
+                                        className="border-t border-zinc-800 hover:bg-zinc-800/20"
+                                    >
 
-                                    <th className="px-6 py-4 font-semibold">
-                                        Collected Amount
-                                    </th>
+                                        <td className="px-4 py-3 font-medium text-white">
+                                            {stage.stageName}
+                                        </td>
 
-                                    <th className="px-6 py-4 font-semibold">
-                                        Remaining Slots
-                                    </th>
+                                        <td className="px-4 py-3 text-zinc-300">
+                                            ₹{stage.stageAmount}
+                                        </td>
 
-                                    <th className="px-6 py-4 font-semibold">
-                                        Status
-                                    </th>
+                                        <td className="px-4 py-3 text-zinc-300">
+                                            ₹{stage.collectedAmount || 0}
+                                        </td>
 
-                                    <th className="px-6 py-4 font-semibold">
-                                        Action
-                                    </th>
+                                        <td className="px-4 py-3 text-zinc-300">
+                                            {remainingSlots}
+                                        </td>
 
-                                </tr>
+                                        <td className="px-4 py-3">
 
-                            </thead>
+                                            <span
+                                                className={`rounded-full px-2.5 py-1 text-[11px] font-medium
+                                            ${stage.status === "COMPLETED"
+                                                        ? "bg-green-500/20 text-green-400"
+                                                        : stage.status === "ACTIVE"
+                                                            ? "bg-blue-500/20 text-blue-400"
+                                                            : "bg-yellow-500/20 text-yellow-400"
+                                                    }`}
+                                            >
+                                                {stage.status}
+                                            </span>
 
-                            <tbody>
+                                        </td>
 
-                                {stages?.map((stage) => {
+                                        <td className="px-4 py-3">
 
-                                    const remaining =
-                                        Number(stage.stageAmount) -
-                                        Number(stage.collectedAmount || 0);
+                                            <button
+                                                disabled={
+                                                    stage.status === "COMPLETED" ||
+                                                    stage.status === "HOLD" ||
+                                                    stage.status === "PENDING"
+                                                }
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/invest/${stage.id}/${movie.id}`
+                                                    )
+                                                }
+                                                className={`rounded-md px-3 py-1.5 text-xs font-medium text-white transition
+                                            ${stage.status === "COMPLETED" ||
+                                                        stage.status === "HOLD" ||
+                                                        stage.status === "PENDING"
+                                                        ? "cursor-not-allowed bg-zinc-700 opacity-50"
+                                                        : "bg-red-600 hover:bg-red-700"
+                                                    }`}
+                                            >
+                                                {stage.status === "COMPLETED"
+                                                    ? "Completed"
+                                                    : stage.status === "HOLD"
+                                                        ? "On Hold"
+                                                        : stage.status === "PENDING"
+                                                            ? "Pending"
+                                                            : "Invest"}
+                                            </button>
 
-                                    const remainingSlots =
-                                        movie?.slotPrice
-                                            ? remaining / movie.slotPrice
-                                            : 0;
+                                        </td>
 
-                                    return (
+                                    </tr>
+                                );
+                            })}
 
-                                        <tr
-                                            key={stage.id}
-                                            className="border-t border-zinc-800 text-zinc-300 transition hover:bg-zinc-800/40"
-                                        >
+                        </tbody>
 
-                                            {/* STAGE NAME */}
-
-                                            <td className="px-6 py-5 font-semibold text-white">
-                                                {stage.stageName}
-                                            </td>
-
-                                            {/* STAGE AMOUNT */}
-
-                                            <td className="px-6 py-5">
-                                                ${stage.stageAmount}
-                                            </td>
-
-                                            {/* COLLECTED */}
-
-                                            <td className="px-6 py-5">
-                                                ${stage.collectedAmount || 0}
-                                            </td>
-
-                                            {/* REMAINING SLOTS */}
-
-                                            <td className="px-6 py-5">
-                                                {remainingSlots}
-                                            </td>
-
-                                            {/* STATUS */}
-
-                                            <td className="px-6 py-5">
-
-                                                <span
-                                                    className={`rounded-full px-3 py-1 text-xs font-bold
-                                                    ${stage.status === "COMPLETED"
-                                                            ? "bg-green-500/20 text-green-400"
-                                                            : stage.status === "ACTIVE"
-                                                                ? "bg-blue-500/20 text-blue-400"
-                                                                : "bg-yellow-500/20 text-yellow-400"
-                                                        }`}
-                                                >
-                                                    {stage.status}
-                                                </span>
-
-                                            </td>
-
-                                            {/* ACTION */}
-
-                                            <td className="px-6 py-5">
-
-                                                <button
-                                                    disabled={stage.status === "COMPLETED" || stage.status === "HOLD" || stage.status === "PENDING"}
-                                                    onClick={() =>
-                                                        navigate(`/invest/${stage.id}/${movie.id}`)
-                                                    }
-                                                    className={`rounded-lg px-4 py-2 text-sm font-semibold text-white transition
-                                                                         ${stage.status === "COMPLETED" || stage.status === "HOLD" || stage.status === "PENDING"
-                                                            ? "cursor-not-allowed bg-zinc-600 opacity-50"
-                                                            : "bg-red-600 hover:bg-red-700"
-                                                        }`}
-                                                >
-                                                    {stage.status === "COMPLETED"
-                                                        ? "Completed"
-                                                        : stage.status === "HOLD"
-                                                            ? "On Hold"
-                                                            : "Invest Now"}
-                                                </button>
-
-                                            </td>
-
-                                        </tr>
-                                    );
-                                })}
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
+                    </table>
 
                 </div>
 

@@ -93,6 +93,7 @@ export const apiSlice = createApi({
           slotsToBuy,
         },
       }),
+      invalidatesTags: ['Investment', 'Stage', 'Movie'],
     }),
 
     createStage: builder.mutation({
@@ -104,7 +105,7 @@ export const apiSlice = createApi({
           amount,
         },
       }),
-      invalidatesTags: ['Movie'],
+      invalidatesTags: ['Movie', 'Stage'],
     }),
 
     getStagesByMovie: builder.query({
@@ -125,6 +126,7 @@ export const apiSlice = createApi({
           status,
         },
       }),
+      invalidatesTags: ['Stage', 'Movie'],
     }),
 
     hideMovie: builder.mutation({
@@ -132,7 +134,7 @@ export const apiSlice = createApi({
         url: `/movies/${movieId}/hide`,
         method: 'PUT',
       }),
-      invalidatesTags: ['Movies'],
+      invalidatesTags: ['Movie'],
     }),
 
     unhideMovie: builder.mutation({
@@ -140,28 +142,45 @@ export const apiSlice = createApi({
         url: `/movies/${movieId}/unhide`,
         method: 'PUT',
       }),
-      invalidatesTags: ['Movies'],
+      invalidatesTags: ['Movie'],
     }),
 
     updateMovieStatus: builder.mutation({
-      query: ({ movieId, status }) => ({
-        url: `/movies/${movieId}/status`,
-        method: 'PUT',
-        params: {
-          status,
-        },
-      }),
-    }),
+  query: ({ movieId, status }) => ({
+    url: `/movies/${movieId}/status`,
+    method: 'PUT',
+    params: {
+      status,
+    },
+  }),
+  invalidatesTags: ['Movie'],
+}),
 
-    updateUserRole : builder.mutation({
-      query: ({ email, role })=> ({
+    updateUserRole: builder.mutation({
+      query: ({ email, role }) => ({
         url: `movies/admin/users/${email}/role`,
         method: 'PUT',
         params: {
           role,
         },
-      })
-    })
+      }),
+    }),
+
+    deleteMovie: builder.mutation({
+  query: (movieId) => ({
+    url: `/movies/delete/${movieId}`,
+    method: 'DELETE',
+  }),
+  invalidatesTags: ['Movie'],
+}),
+
+    deleteStage: builder.mutation({
+      query: (stageId) => ({
+        url: `/investments/stages/${stageId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Stage', 'Movie'],
+    }),
 
   }),
 });
@@ -193,5 +212,7 @@ export const {
   useUnhideMovieMutation,
   useUpdateStageStatusMutation,
   useUpdateUserRoleMutation,
+  useDeleteMovieMutation,
+  useDeleteStageMutation,
 
 } = apiSlice;

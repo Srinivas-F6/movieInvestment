@@ -10,4 +10,5 @@ import java.util.List;
 public interface InvestmentRepository extends JpaRepository<Investment, Long> {
     List<Investment> findByInvestorId(Long investorId);
     List<Investment> findByMovieId(Long movieId);
+	boolean existsByStageId(Long stageId);
 }
