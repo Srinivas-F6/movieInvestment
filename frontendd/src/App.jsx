@@ -17,13 +17,18 @@ import CreateStage from './pages/CreateStage';
 import { StageDetails } from './pages/StageDetails';
 import AdminDashboard from './pages/AdminDashboard';
 import { Investors } from './pages/Investors';
+import {ProducerDashboard} from "./pages/ProducerDashboard";
+import {UserDashboard} from "./pages/UserDashboard";
+import {MovieSettlement} from "./pages/MovieSettlement";
+import {ProducerGuidelines} from "./pages/ProducerGuidelines";
+import {UserGuidelines} from "./pages/UserGuidelines";
 
 function App() {
 
   return (
     <>
 
-      <ToastContainer position="top-right" autoClose={2000} toastStyle={{
+      <ToastContainer position="top-left" autoClose={2000} toastStyle={{
         fontSize: "14px", minHeight: "40px", padding: "8px 12px", width: "280px",
       }}
       />
@@ -79,8 +84,33 @@ function App() {
               />
 
               <Route
+                path="/producer"
+                element={<ProducerDashboard />}
+              />
+
+              <Route
+                path="/user"
+                element={<UserDashboard />}
+              />
+
+              <Route
                 path="/movie/investorDetails/:movieId"
                 element={<Investors />}
+              />
+
+              <Route
+                path="/movie/:movieId/settlement"
+                element={<MovieSettlement />}
+              />
+
+              <Route
+                path="/guidelines/producer"
+                element={<ProducerGuidelines />}
+              />
+
+              <Route
+                path="/guidelines/investor"
+                element={<UserGuidelines />}
               />
 
             </Routes>

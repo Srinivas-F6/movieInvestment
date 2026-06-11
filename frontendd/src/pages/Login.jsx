@@ -149,6 +149,28 @@ const Login = () => {
               </div>
 
             </div>
+            <div className="mt-6 border-t border-zinc-800 pt-4">
+              <p className="mb-3 text-center text-xs font-semibold text-zinc-400">
+                Need Help?
+              </p>
+
+              <div className="grid grid-cols-2 ap-2 text-center text-sm">
+                <button
+                  className="text-zinc-300 hover:text-red-400"
+                  onClick={() => navigate("/guidelines/investor")}
+                >
+                  Investor Guidelines
+                </button>
+
+                <button
+                  className="text-zinc-300 hover:text-red-400"
+                  onClick={() => navigate("/guidelines/producer")}
+                >
+                  Producer Guidelines
+                </button>
+
+              </div>
+            </div>
 
           </div>
 
@@ -294,6 +316,7 @@ const Login = () => {
               </form>
 
             </div>
+
 
           </div>
 

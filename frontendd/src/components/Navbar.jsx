@@ -10,6 +10,7 @@ import {
 import { useSearchMoviesQuery } from "../store/apiSlice";
 import { logout } from "../store/authSlice";
 
+
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -17,6 +18,8 @@ const Navbar = () => {
   const { token, role } = useSelector(
     (state) => state.auth
   );
+
+  const roleLower = role ? role.toLowerCase() : null;
 
   const [search, setSearch] = useState("");
 
@@ -95,18 +98,26 @@ const Navbar = () => {
                 Dashboard
               </Link>
 
-              {role === "ADMIN" && (
+              {role && (
                 <Link
-                  to="/admin"
-                  className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-700"
+                  to={
+                    role === "ADMIN"
+                      ? "/admin"
+                      : role === "PRODUCER"
+                        ? "/producer"
+                        : role === "USER"
+                          ? "/user"
+                          : "/"
+                  }
+                  className="rounded-md px-3 py-2 text-sm font-medium text-white  transition hover:bg-zinc-800 hover:text-white"
                 >
-                  Admin
+                  {roleLower.charAt(0).toUpperCase()+roleLower.slice(1)}
                 </Link>
               )}
 
               <button
                 onClick={handleLogout}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+                className="rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-red-700"
               >
                 Logout
               </button>
@@ -114,7 +125,7 @@ const Navbar = () => {
           ) : (
             <Link
               to="/login"
-              className="rounded-md bg-red-600 px-4 py-2 text-sm   text-white transition hover:bg-red-700"
+              className="rounded-md bg-red-600 px-3 py-2 text-sm  font-medium  text-white transition hover:bg-red-700"
             >
               Login
             </Link>

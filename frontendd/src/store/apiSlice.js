@@ -8,6 +8,7 @@ export const apiSlice = createApi({
 
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
+      console.log(token);
 
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
@@ -17,7 +18,7 @@ export const apiSlice = createApi({
     },
   }),
 
-  tagTypes: ['Movie', 'Investment', 'User'],
+  tagTypes: ['Movie', 'Investment', 'User','Stage', 'InvestorDashboard'],
 
   endpoints: (builder) => ({
 
@@ -37,6 +38,11 @@ export const apiSlice = createApi({
         method: 'POST',
         body: userData,
       }),
+    }),
+
+    currentUser: builder.query({
+      query: () => '/auth/currentUser',
+      providesTags: ['User'],
     }),
 
     // ================= MOVIES =================
@@ -70,6 +76,17 @@ export const apiSlice = createApi({
         url: `/movies/search`,
         params: { title },
       }),
+    }),
+
+    settleMovie: builder.mutation({
+      query: ({ movieId, amount }) => ({
+        url: `/settlements/${movieId}`,
+        method: "POST",
+        body: {
+          amount,
+        },
+      }),
+      invalidatesTags: ["Movie", "InvestorDashboard"],
     }),
 
 
@@ -116,6 +133,12 @@ export const apiSlice = createApi({
       providesTags: ['Stage'],
     }),
 
+
+    getInvestorDashboard: builder.query({
+      query: () => "/settlements/userDashboard",
+      providesTags: ["InvestorDashboard"],
+    }),
+
     // ================= Admin Panel =================
 
     updateStageStatus: builder.mutation({
@@ -146,15 +169,15 @@ export const apiSlice = createApi({
     }),
 
     updateMovieStatus: builder.mutation({
-  query: ({ movieId, status }) => ({
-    url: `/movies/${movieId}/status`,
-    method: 'PUT',
-    params: {
-      status,
-    },
-  }),
-  invalidatesTags: ['Movie'],
-}),
+      query: ({ movieId, status }) => ({
+        url: `/movies/${movieId}/status`,
+        method: 'PUT',
+        params: {
+          status,
+        },
+      }),
+      invalidatesTags: ['Movie'],
+    }),
 
     updateUserRole: builder.mutation({
       query: ({ email, role }) => ({
@@ -164,15 +187,16 @@ export const apiSlice = createApi({
           role,
         },
       }),
+      invalidatesTags: ['User'],
     }),
 
     deleteMovie: builder.mutation({
-  query: (movieId) => ({
-    url: `/movies/delete/${movieId}`,
-    method: 'DELETE',
-  }),
-  invalidatesTags: ['Movie'],
-}),
+      query: (movieId) => ({
+        url: `/movies/delete/${movieId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Movie'],
+    }),
 
     deleteStage: builder.mutation({
       query: (stageId) => ({
@@ -190,6 +214,7 @@ export const {
   // AUTH
   useLoginMutation,
   useRegisterMutation,
+  useCurrentUserQuery,
 
   // MOVIES
   useGetMoviesQuery,
@@ -197,6 +222,7 @@ export const {
   useGetMoviesByProducerQuery,
   useCreateMovieMutation,
   useSearchMoviesQuery,
+  useSettleMovieMutation,
 
 
   // INVESTMENTS
@@ -205,6 +231,7 @@ export const {
   useInvestInStageMutation,
   useCreateStageMutation,
   useGetStagesByMovieQuery,
+  useGetInvestorDashboardQuery,
 
   // AdminPanel 
   useUpdateMovieStatusMutation,

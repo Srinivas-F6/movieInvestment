@@ -10,7 +10,22 @@ import {
     useUpdateUserRoleMutation,
     useDeleteMovieMutation,
     useDeleteStageMutation,
+    useCurrentUserQuery
 } from '../store/apiSlice';
+
+import {
+    ShieldCheckIcon,
+    CheckCircleIcon,
+    XCircleIcon,
+    ClockIcon,
+    EyeSlashIcon,
+    EyeIcon,
+    FilmIcon,
+    PlayCircleIcon,
+    PauseCircleIcon,
+    TrashIcon,
+    UserCircleIcon
+} from "@heroicons/react/24/solid";
 
 const AdminDashboard = () => {
 
@@ -25,6 +40,9 @@ const AdminDashboard = () => {
         isLoading,
         isError,
     } = useGetMoviesQuery();
+
+    const { data: currentUser } = useCurrentUserQuery();
+    console.log(currentUser);
 
     const [updateMovieStatus] = useUpdateMovieStatusMutation();
     const [updateStageStatus] = useUpdateStageStatusMutation();
@@ -71,6 +89,9 @@ const AdminDashboard = () => {
             }
             else if (status === 'PENDING') {
                 alert('Movie marked as pending');
+            }
+            else if (status === 'COMPLETED') {
+                alert('Movie marked as completed');
             }
 
         } catch (err) {
@@ -301,8 +322,9 @@ const AdminDashboard = () => {
                     {/* BUTTON */}
                     <button
                         onClick={handleRoleUpdate}
-                        className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold transition hover:bg-red-700"
+                        className="flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
                     >
+                        <ShieldCheckIcon className="h-4 w-4" />
                         Update Role
                     </button>
 
@@ -370,15 +392,17 @@ const AdminDashboard = () => {
 
                                         <button
                                             onClick={() => navigate(`/movie/${movie.id}`)}
-                                            className="rounded-lg border border-zinc-700 bg-red-600/90 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700"
+                                            className="flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-red-600/90 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700"
                                         >
+                                            <FilmIcon className="h-4 w-4" />
                                             Movie Details
                                         </button>
 
                                         <button
                                             onClick={() => handleDelete(movie.id)}
-                                            className="rounded-lg border border-red-800 bg-zinc-900 px-3 py-2 text-xs font-semibold text-red-400 transition hover:bg-red-950/40"
+                                            className="flex items-center gap-1.5 rounded-lg border border-red-800 bg-zinc-900 px-3 py-2 text-xs font-semibold text-red-400 transition hover:bg-red-950/40"
                                         >
+                                            <TrashIcon className="h-4 w-4" />
                                             Delete Movie
                                         </button>
 
@@ -390,50 +414,76 @@ const AdminDashboard = () => {
                                 <div className="flex flex-wrap gap-2 lg:justify-end">
 
                                     <button
-                                        disabled={movie.status === 'APPROVED'}
+                                        disabled={movie.status === 'APPROVED' || movie.status === 'COMPLETED'}
                                         onClick={() => handleMovieStatus(movie.id, 'APPROVED')}
-                                        className={`rounded-lg px-3 py-2 text-xs font-semibold transition
-                                                 ${movie.status === 'APPROVED'
+                                        className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition
+    ${movie.status === 'APPROVED' || movie.status === 'COMPLETED'
                                                 ? 'cursor-not-allowed bg-green-700 text-white'
                                                 : 'bg-green-600 hover:bg-green-700 text-white'
                                             }`}
                                     >
+                                        <CheckCircleIcon className="h-4 w-4" />
                                         Approve
                                     </button>
 
                                     <button
-                                        disabled={movie.status === 'REJECTED'}
+                                        disabled={movie.status === 'REJECTED' || movie.status === 'COMPLETED'}
                                         onClick={() => handleMovieStatus(movie.id, 'REJECTED')}
-                                        className={`rounded-lg px-3 py-2 text-xs font-semibold transition
-                ${movie.status === 'REJECTED'
+                                        className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition
+    ${movie.status === 'REJECTED' || movie.status === 'COMPLETED'
                                                 ? 'cursor-not-allowed bg-red-700 text-white'
                                                 : 'bg-red-600 hover:bg-red-700 text-white'
                                             }`}
                                     >
+                                        <XCircleIcon className="h-4 w-4" />
                                         Reject
                                     </button>
 
                                     <button
-                                        disabled={movie.status === 'PENDING'}
+                                        disabled={movie.status === 'PENDING' || movie.status === 'COMPLETED'}
                                         onClick={() => handleMovieStatus(movie.id, 'PENDING')}
-                                        className={`rounded-lg px-3 py-2 text-xs font-semibold transition
-                ${movie.status === 'PENDING'
+                                        className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition
+    ${movie.status === 'PENDING' || movie.status === 'COMPLETED'
                                                 ? 'cursor-not-allowed bg-yellow-700 text-white'
                                                 : 'bg-yellow-600 hover:bg-yellow-700 text-white'
                                             }`}
                                     >
+                                        <ClockIcon className="h-4 w-4" />
                                         Pending
                                     </button>
 
                                     <button
                                         onClick={() => handleHideToggle(movie)}
-                                        className={`rounded-lg px-3 py-2 text-xs font-semibold transition
-                                                 ${movie.hidden
+                                        className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition
+    ${movie.hidden
                                                 ? 'bg-blue-600 hover:bg-blue-700 text-white'
                                                 : 'bg-cyan-700 hover:bg-cyan-600 text-white'
                                             }`}
                                     >
-                                        {movie.hidden ? 'Unhide' : 'Hide'}
+                                        {movie.hidden ? (
+                                            <>
+                                                <EyeIcon className="h-4 w-4" />
+                                                Unhide
+                                            </>
+                                        ) : (
+                                            <>
+                                                <EyeSlashIcon className="h-4 w-4" />
+                                                Hide
+                                            </>
+                                        )}
+                                    </button>
+
+                                    <button
+                                        disabled={movie.status === 'COMPLETED'}
+                                        onClick={() => handleMovieStatus(movie.id, 'COMPLETED')}
+                                        className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition
+    ${movie.status === 'COMPLETED'
+                                                ? 'cursor-not-allowed bg-purple-700 text-white'
+                                                : 'bg-purple-600 hover:bg-purple-700 text-white'
+                                            }`}
+                                    >
+                                        <FilmIcon className="h-4 w-4" />
+                                        Completed
                                     </button>
 
                                 </div>
@@ -511,12 +561,14 @@ const AdminDashboard = () => {
                                                             onClick={() =>
                                                                 handleStageStatus(stage.id, 'ACTIVE')
                                                             }
-                                                            className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition
-                                                                    ${stage.status === 'ACTIVE' || stage.status === 'COMPLETED'
+                                                            className={`flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold transition
+        ${stage.status === 'ACTIVE' ||
+                                                                    stage.status === 'COMPLETED'
                                                                     ? 'cursor-not-allowed bg-blue-700 text-white'
                                                                     : 'bg-blue-600 hover:bg-blue-700 text-white'
                                                                 }`}
                                                         >
+                                                            <PlayCircleIcon className="h-3.5 w-3.5" />
                                                             Activate
                                                         </button>
 
@@ -528,20 +580,22 @@ const AdminDashboard = () => {
                                                             onClick={() =>
                                                                 handleStageStatus(stage.id, 'HOLD')
                                                             }
-                                                            className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition
-                                    ${stage.status === 'HOLD' ||
+                                                            className={`flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold transition
+        ${stage.status === 'HOLD' ||
                                                                     stage.status === 'COMPLETED'
                                                                     ? 'cursor-not-allowed bg-red-700 text-white'
                                                                     : 'bg-red-600 hover:bg-red-700 text-white'
                                                                 }`}
                                                         >
+                                                            <PauseCircleIcon className="h-3.5 w-3.5" />
                                                             Hold
                                                         </button>
 
                                                         <button
                                                             onClick={() => handleDeleteStage(stage.id)}
-                                                            className="rounded-lg  px-2.5 py-1 text-[11px] font-semibold border border-red-800 bg-zinc-900 text-red-500  transition"
+                                                            className="flex items-center gap-1 rounded-lg border border-red-800 bg-zinc-900 px-2.5 py-1 text-[11px] font-semibold text-red-500 transition hover:bg-red-950/40"
                                                         >
+                                                            <TrashIcon className="h-3.5 w-3.5" />
                                                             Delete
                                                         </button>
 

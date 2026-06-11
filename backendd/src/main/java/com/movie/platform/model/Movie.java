@@ -52,6 +52,12 @@ public class Movie {
     @NotNull
     @DecimalMin(value = "1.0")
     private BigDecimal slotPrice;
+    
+    @Column(name = "profit")
+    private BigDecimal profit = BigDecimal.ZERO;
+    @Column(name = "loss")
+    private BigDecimal loss = BigDecimal.ZERO;
+    
 
 
     @JsonIgnore
@@ -97,5 +103,6 @@ public class Movie {
         PENDING,
         APPROVED,
         REJECTED,
+        COMPLETED				
     }
 }

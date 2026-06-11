@@ -37,13 +37,13 @@ public class InvestmentStage {
     @JoinColumn(name = "movie_id")
     @JsonBackReference
     private Movie movie;
-
-    public enum StageName {
-        PRE_PRODUCTION,
-        PRODUCTION,
-        POST_PRODUCTION,
-        MARKETING_DISTRIBUTION
-    }
+	
+	    public enum StageName {
+	        PRE_PRODUCTION,
+	        PRODUCTION,
+	        POST_PRODUCTION,
+	        MARKETING_DISTRIBUTION
+	    }
 
     public enum StageStatus {
         PENDING,

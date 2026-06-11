@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import {
   useGetInvestmentsForUserQuery,
   useCreateMovieMutation,
-  useGetMoviesByProducerQuery,
 } from '../store/apiSlice';
 
 import { Navigate } from 'react-router-dom';
@@ -18,13 +17,6 @@ const Dashboard = () => {
 
   const { token, userId, role } = useSelector(
     (state) => state.auth
-  );
-
-  const { data: producerMovies, isLoading: moviesLoading, isError: moviesError, } = useGetMoviesByProducerQuery(
-    userId,
-    {
-      skip: role !== 'PRODUCER',
-    }
   );
 
 
@@ -356,151 +348,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* ================= Producer Movies =================== */}
-      {role === "PRODUCER" && (
-        <div className="mb-8 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-6 shadow-lg backdrop-blur">
-
-          {/* Header */}
-          <div className="mb-6 border-b border-zinc-800 pb-4">
-            <h2 className="text-2xl font-bold text-white">
-              Your Movies
-            </h2>
-
-            <p className="mt-1 text-sm text-zinc-400">
-              Manage your movie campaigns and funding stages.
-            </p>
-          </div>
-
-          {moviesLoading && (
-            <div className="py-8 text-center text-zinc-400">
-              Loading movies...
-            </div>
-          )}
-
-          {moviesError && (
-            <div className="py-8 text-center text-red-500">
-              Failed to load movies.
-            </div>
-          )}
-
-          {producerMovies?.length === 0 && (
-            <div className="py-8 text-center text-zinc-500">
-              No movies created yet.
-            </div>
-          )}
-
-          {producerMovies?.length > 0 && (
-            <div className="space-y-4">
-
-              {producerMovies.map((movie) => (
-
-                <div
-                  key={movie.id}
-                  className="rounded-xl border border-zinc-800 bg-zinc-950/80 p-5 transition hover:border-red-500/40"
-                >
-
-                  <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-
-                    {/* Left Side */}
-                    <div>
-
-                      <h3 className="text-2xl font-bold text-white">
-                        {movie.title}
-                      </h3>
-
-                      <div className="mt-4 flex flex-wrap gap-2">
-
-                        <div className="rounded-full bg-red-500/10 px-3 py-1 text-sm font-medium text-red-400">
-                          Total Budget: ₹{movie.targetFunding}
-                        </div>
-
-                        <div className="rounded-full bg-blue-500/10 px-3 py-1 text-sm font-medium text-blue-400">
-                          Raised ₹{movie.currentFunding}
-                        </div>
-
-                        <div
-                          className={`rounded-full px-2 py-1 text-sm 
-                    ${movie.status === "APPROVED"
-                              ? "bg-green-500/10 text-green-400"
-                              : movie.status === "REJECTED"
-                                ? "bg-red-500/10 text-red-400"
-                                : "bg-yellow-500/10 text-yellow-400"
-                            }`}
-                        >
-                          {movie.status}
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                    {/* Right Side */}
-                    <div className="flex flex-wrap gap-2">
-
-                      <button
-                        onClick={() => {
-
-                          if (movie.status === "APPROVED") {
-
-                            navigate(`/movies/${movie.id}/create-stage`);
-
-                          } else if (movie.status === "PENDING") {
-
-                            alert(
-                              "Movie is still pending admin approval."
-                            );
-
-                          } else if (movie.status === "REJECTED") {
-
-                            alert(
-                              "Movie was rejected by admin."
-                            );
-
-                          } else {
-
-                            alert(
-                              `Cannot create stage when movie status is ${movie.status}`
-                            );
-
-                          }
-
-                        }}
-                        className="rounded-lg bg-purple-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-purple-700"
-                      >
-                        Create Stage
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          navigate(`/movie/stageDetails/${movie.id}`)
-                        }
-                        className="rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-red-700"
-                      >
-                        Stage Details
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          navigate(`/movie/investorDetails/${movie.id}`)
-                        }
-                        className="rounded-lg bg-cyan-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-cyan-700"
-                      >
-                        Investors
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              ))}
-
-            </div>
-          )}
-
-        </div>
-      )}
+      
 
 
 

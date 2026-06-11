@@ -11,7 +11,7 @@ export function MovieDetails() {
 
     const { movieId } = useParams();
     const navigate = useNavigate();
-    const { token } = useSelector((state) => state.auth);
+    const { token, role } = useSelector((state) => state.auth);
 
     const {
         data: movie,
@@ -19,16 +19,12 @@ export function MovieDetails() {
         isError,
     } = useGetMovieByIdQuery(movieId);
 
-    console.log(movie);
 
     const {
         data: movies,
         isLoading: moviesLoading,
         isError: moviesError,
     } = useGetStagesByMovieQuery(movieId);
-
-
-    console.log(movies);
 
     if (!token) {
         return <Navigate to="/login" />;
@@ -83,23 +79,32 @@ export function MovieDetails() {
 
                         <div>
 
-                            <div className="flex flex-wrap items-center gap-3">
+                            <div className="flex flex-wrap items-center justify-between gap-3">
 
-                                <h1 className="text-3xl font-bold lg:text-4xl">
-                                    {movie.title}
-                                </h1>
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <h1 className="text-3xl font-bold lg:text-4xl">
+                                        {movie.title}
+                                    </h1>
 
-                                <span
-                                    className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider
-                                ${movie.status === "APPROVED"
-                                            ? "bg-green-500/20 text-green-400"
-                                            : movie.status === "PENDING"
-                                                ? "bg-yellow-500/20 text-yellow-400"
-                                                : "bg-red-500/20 text-red-400"
-                                        }`}
-                                >
-                                    {movie.status}
-                                </span>
+                                    <span
+                                        className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider
+            ${movie.status === "APPROVED"
+                                                ? "bg-green-500/20 text-green-400"
+                                                : movie.status === "PENDING"
+                                                    ? "bg-yellow-500/20 text-yellow-400"
+                                                    : "bg-red-500/20 text-red-400"
+                                            }`}
+                                    >
+                                        {movie.status}
+                                    </span>
+                                </div>
+
+                                <div className="text-right">
+                                    <p className="text-sm text-zinc-400">Slot Price</p>
+                                    <p className="text-xl font-bold text-green-400">
+                                        ₹{movie.slotPrice?.toLocaleString()}
+                                    </p>
+                                </div>
 
                             </div>
 
@@ -168,153 +173,156 @@ export function MovieDetails() {
 
                 {/* INVESTMENT STAGES */}
 
-                <div className="mt-6 rounded-3xl border border-zinc-800 bg-zinc-900/70 shadow-xl backdrop-blur-md">
+                {role !== "ADMIN" && (
 
-                    <div className="flex items-center justify-between border-b border-zinc-800 px-5 py-4">
+                    <div className="mt-6 rounded-3xl border border-zinc-800 bg-zinc-900/70 shadow-xl backdrop-blur-md">
 
-                        <h2 className="text-xl font-bold text-white">
-                            Investment Stages
-                        </h2>
+                        <div className="flex items-center justify-between border-b border-zinc-800 px-5 py-4">
 
-                        <span className="rounded-full bg-red-500/20 px-3 py-1 text-xs font-semibold text-red-400">
-                            {movies?.length || 0} Stages
-                        </span>
+                            <h2 className="text-xl font-bold text-white">
+                                Investment Stages
+                            </h2>
 
-                    </div>
+                            <span className="rounded-full bg-red-500/20 px-3 py-1 text-xs font-semibold text-red-400">
+                                {movies?.length || 0} Stages
+                            </span>
 
-                    {moviesLoading ? (
-
-                        <div className="flex justify-center py-8">
-                            <div className="h-8 w-8 animate-spin rounded-full border-4 border-red-500 border-t-transparent" />
                         </div>
 
-                    ) : movies?.length === 0 ? (
+                        {moviesLoading ? (
 
-                        <div className="p-8 text-center text-sm text-zinc-500">
-                            No stages created yet.
-                        </div>
+                            <div className="flex justify-center py-8">
+                                <div className="h-8 w-8 animate-spin rounded-full border-4 border-red-500 border-t-transparent" />
+                            </div>
 
-                    ) : (
+                        ) : movies?.length === 0 ? (
 
-                        <div className="overflow-x-auto">
+                            <div className="p-8 text-center text-sm text-zinc-500">
+                                No stages created yet.
+                            </div>
 
-                            <table className="min-w-full text-sm">
+                        ) : (
 
-                                <thead className="bg-zinc-800/80 text-zinc-300">
+                            <div className="overflow-x-auto">
 
-                                    <tr>
+                                <table className="min-w-full text-sm">
 
-                                        <th className="px-5 py-3 text-left font-semibold">
-                                            Stage
-                                        </th>
+                                    <thead className="bg-zinc-800/80 text-zinc-300">
 
-                                        <th className="px-5 py-3 text-left font-semibold">
-                                            Total Slots
-                                        </th>
+                                        <tr>
 
-                                        <th className="px-5 py-3 text-left font-semibold">
-                                            Available Slots
-                                        </th>
+                                            <th className="px-5 py-3 text-left font-semibold">
+                                                Stage
+                                            </th>
 
-                                        <th className="px-5 py-3 text-left font-semibold">
-                                            Status
-                                        </th>
+                                            <th className="px-5 py-3 text-left font-semibold">
+                                                Total Slots
+                                            </th>
 
-                                        <th className="px-5 py-3 text-left font-semibold">
-                                            Action
-                                        </th>
+                                            <th className="px-5 py-3 text-left font-semibold">
+                                                Available Slots
+                                            </th>
 
-                                    </tr>
+                                            <th className="px-5 py-3 text-left font-semibold">
+                                                Status
+                                            </th>
 
-                                </thead>
+                                            <th className="px-5 py-3 text-left font-semibold">
+                                                Action
+                                            </th>
 
-                                <tbody>
+                                        </tr>
 
-                                    {movies?.map((stage) => {
+                                    </thead>
 
-                                        const totalSlots =
-                                            stage.stageAmount / movie.slotPrice;
+                                    <tbody>
 
-                                        const availableSlots =
-                                            totalSlots -
-                                            stage.collectedAmount / movie.slotPrice;
+                                        {movies?.map((stage) => {
 
-                                        return (
+                                            const totalSlots =
+                                                stage.stageAmount / movie.slotPrice;
 
-                                            <tr
-                                                key={stage.id}
-                                                className="border-t border-zinc-800 hover:bg-zinc-800/30"
-                                            >
+                                            const availableSlots =
+                                                totalSlots -
+                                                stage.collectedAmount / movie.slotPrice;
 
-                                                <td className="px-5 py-3 font-medium text-white">
-                                                    {stage.stageName}
-                                                </td>
+                                            return (
 
-                                                <td className="px-5 py-3 text-zinc-300">
-                                                    {totalSlots}
-                                                </td>
+                                                <tr
+                                                    key={stage.id}
+                                                    className="border-t border-zinc-800 hover:bg-zinc-800/30"
+                                                >
 
-                                                <td className="px-5 py-3 text-zinc-300">
-                                                    {availableSlots}
-                                                </td>
+                                                    <td className="px-5 py-3 font-medium text-white">
+                                                        {stage.stageName}
+                                                    </td>
 
-                                                <td className="px-5 py-3">
+                                                    <td className="px-5 py-3 text-zinc-300">
+                                                        {totalSlots}
+                                                    </td>
 
-                                                    <span
-                                                        className={`rounded-full px-3 py-1 text-xs font-bold
+                                                    <td className="px-5 py-3 text-zinc-300">
+                                                        {availableSlots}
+                                                    </td>
+
+                                                    <td className="px-5 py-3">
+
+                                                        <span
+                                                            className={`rounded-full px-3 py-1 text-xs font-bold
                                                     ${stage.status === "COMPLETED"
-                                                                ? "bg-green-500/20 text-green-400"
-                                                                : stage.status === "ONGOING"
-                                                                    ? "bg-blue-500/20 text-blue-400"
-                                                                    : "bg-yellow-500/20 text-yellow-400"
-                                                            }`}
-                                                    >
-                                                        {stage.status}
-                                                    </span>
+                                                                    ? "bg-green-500/20 text-green-400"
+                                                                    : stage.status === "ONGOING"
+                                                                        ? "bg-blue-500/20 text-blue-400"
+                                                                        : "bg-yellow-500/20 text-yellow-400"
+                                                                }`}
+                                                        >
+                                                            {stage.status}
+                                                        </span>
 
-                                                </td>
+                                                    </td>
 
-                                                <td className="px-5 py-3">
+                                                    <td className="px-5 py-3">
 
-                                                    <button
-                                                        disabled={
-                                                            stage.status === "COMPLETED" ||
-                                                            stage.status === "HOLD" ||
-                                                            stage.status === "PENDING"
-                                                        }
-                                                        onClick={() =>
-                                                            navigate(`/invest/${stage.id}/${movie.id}`)
-                                                        }
-                                                        className={`rounded-lg px-3 py-1.5 text-sm font-semibold text-white transition
-                                                    ${stage.status === "COMPLETED" ||
+                                                        <button
+                                                            disabled={
+                                                                stage.status === "COMPLETED" ||
                                                                 stage.status === "HOLD" ||
                                                                 stage.status === "PENDING"
-                                                                ? "cursor-not-allowed bg-zinc-700 opacity-50"
-                                                                : "bg-red-600 hover:bg-red-700"
-                                                            }`}
-                                                    >
-                                                        {stage.status === "COMPLETED"
-                                                            ? "Completed"
-                                                            : stage.status === "HOLD"
-                                                                ? "On Hold"
-                                                                : "Invest"}
-                                                    </button>
+                                                            }
+                                                            onClick={() =>
+                                                                navigate(`/invest/${stage.id}/${movie.id}`)
+                                                            }
+                                                            className={`rounded-lg px-3 py-1.5 text-sm font-semibold text-white transition
+                                                    ${stage.status === "COMPLETED" ||
+                                                                    stage.status === "HOLD" ||
+                                                                    stage.status === "PENDING"
+                                                                    ? "cursor-not-allowed bg-zinc-700 opacity-50"
+                                                                    : "bg-red-600 hover:bg-red-700"
+                                                                }`}
+                                                        >
+                                                            {stage.status === "COMPLETED"
+                                                                ? "Completed"
+                                                                : stage.status === "HOLD"
+                                                                    ? "On Hold"
+                                                                    : "Invest"}
+                                                        </button>
 
-                                                </td>
+                                                    </td>
 
-                                            </tr>
-                                        );
-                                    })}
+                                                </tr>
+                                            );
+                                        })}
 
-                                </tbody>
+                                    </tbody>
 
-                            </table>
+                                </table>
 
-                        </div>
+                            </div>
 
-                    )}
+                        )}
 
-                </div>
+                    </div>
+                )}
 
             </div>
 
