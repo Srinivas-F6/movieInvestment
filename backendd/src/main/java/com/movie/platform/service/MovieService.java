@@ -23,8 +23,10 @@ public class MovieService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
-    private final String UPLOAD_DIR = "uploads/movies/";
 
     // GET ALL MOVIES
     public List<Movie> getAllMovies() {
@@ -46,91 +48,62 @@ public class MovieService {
     }
 
     // CREATE MOVIE
-    @Transactional
-    public Movie createMovie(
-            Movie movie,
-            MultipartFile image,
-            Long producerId
-    ) {
+	    @Transactional
+	    public Movie createMovie(
+	            Movie movie,
+	            MultipartFile image,
+	            Long producerId
+	    ) {
+	
+	        // FIND PRODUCER
+	        User producer = userRepository.findById(producerId)
+	                .orElseThrow(() ->
+	                        new RuntimeException("Producer not found"));
+	
+	        movie.setProducer(producer);
+	
+	        // SAFE INITIALIZATION
+	        if (movie.getCast() == null) {
+	            movie.setCast(new ArrayList<>());
+	        }
+	
+	        if (movie.getCrew() == null) {
+	            movie.setCrew(new ArrayList<>());
+	        }
+	
+	        // IMAGE UPLOAD
+	     // IMAGE UPLOAD
+	        if (image != null && !image.isEmpty()) {
 
-        // FIND PRODUCER
-        User producer = userRepository.findById(producerId)
-                .orElseThrow(() ->
-                        new RuntimeException("Producer not found"));
+	            try {
 
-        movie.setProducer(producer);
+	                // FILE SIZE CHECK (MAX 5MB)
+	                if (image.getSize() > 5 * 1024 * 1024) {
+	                    throw new RuntimeException("Image size exceeds 5MB");
+	                }
 
-        // SAFE INITIALIZATION
-        if (movie.getCast() == null) {
-            movie.setCast(new ArrayList<>());
-        }
+	                // FILE TYPE CHECK
+	                String contentType = image.getContentType();
 
-        if (movie.getCrew() == null) {
-            movie.setCrew(new ArrayList<>());
-        }
+	                if (contentType == null ||
+	                    (!contentType.equals("image/jpeg") &&
+	                     !contentType.equals("image/png") &&
+	                     !contentType.equals("image/webp"))) {
 
-        // IMAGE UPLOAD
-        if (image != null && !image.isEmpty()) {
+	                    throw new RuntimeException("Only JPG, PNG, WEBP images allowed");
+	                }
 
-            try {
+	                // CLOUDINARY UPLOAD (REPLACED LOGIC)
+	                String imageUrl = cloudinaryService.uploadImage(image);
+	                movie.setImageUrl(imageUrl);
 
-                // FILE SIZE CHECK (MAX 5MB)
-                if (image.getSize() > 5 * 1024 * 1024) {
-
-                    throw new RuntimeException(
-                            "Image size exceeds 5MB"
-                    );
-                }
-
-                // FILE TYPE CHECK
-                String contentType =
-                        image.getContentType();
-
-                if (
-                        contentType == null ||
-                        (
-                            !contentType.equals("image/jpeg") &&
-                            !contentType.equals("image/png") &&
-                            !contentType.equals("image/webp")
-                        )
-                ) {
-
-                    throw new RuntimeException(
-                            "Only JPG, PNG, WEBP images allowed"
-                    );
-                }
-
-                // GENERATE UNIQUE FILE NAME
-                String fileName =
-                        UUID.randomUUID()
-                        + "_"
-                        + image.getOriginalFilename();
-
-                
-                Path path = Paths.get(
-                        UPLOAD_DIR + fileName
-                );
-
-               Files.createDirectories(
-                        path.getParent()
-                );
-                
-                image.transferTo(path);
-                
-                movie.setImageUrl(
-                        "/uploads/movies/" + fileName
-                );
-
-            } catch (IOException e) {
-
-                throw new RuntimeException(
-                        "Image upload failed"
-                );
-            }
-        }
-
-        return movieRepository.save(movie);
-    }
+	            } catch (Exception e) {
+	                throw new RuntimeException("Image upload failed");
+	            }
+	        }
+	
+	        return movieRepository.save(movie);
+	    }
 
     // UPDATE MOVIE STATUS
     public Movie updateMovieStatus(
