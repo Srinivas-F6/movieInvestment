@@ -1,4 +1,5 @@
 import { useGetInvestorDashboardQuery } from "../store/apiSlice";
+
 export function UserDashboard() {
     const {
         data,
@@ -6,8 +7,7 @@ export function UserDashboard() {
         isError,
     } = useGetInvestorDashboardQuery(undefined, {
     refetchOnMountOrArgChange: true,
-});
-    console.log(data);
+}); 
 
     if (isLoading) {
         return (
