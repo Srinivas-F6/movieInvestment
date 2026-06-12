@@ -32,7 +32,7 @@ public class SecurityConfig {
 
                 config.setAllowedOrigins(List.of(
                     "http://localhost:5173",
-                    "https://your-project.vercel.app"
+                    "https://movie-investment.vercel.app"
                 ));
 
                 config.setAllowedMethods(List.of(
