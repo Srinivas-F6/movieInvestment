@@ -33,13 +33,25 @@ public class Movie {
     @Column(length = 3000)
     private String description;
 
-    @NotEmpty(message = "Crew required")
-    @ElementCollection
-    private List<String> crew = new ArrayList<>();
-
     @NotEmpty(message = "Cast required")
     @ElementCollection
+    @CollectionTable(
+        name = "movie_cast",
+        joinColumns = @JoinColumn(name = "movie_id")
+    )
+    @OrderColumn(name = "cast_index")
+    @Column(name = "cast_member")
     private List<String> cast = new ArrayList<>();
+
+    @NotEmpty(message = "Crew required")
+    @ElementCollection
+    @CollectionTable(
+        name = "movie_crew",
+        joinColumns = @JoinColumn(name = "movie_id")
+    )
+    @OrderColumn(name = "crew_index")
+    @Column(name = "crew_member")
+    private List<String> crew = new ArrayList<>();
 
     @NotNull
     @DecimalMin(value = "1.0", message = "Funding must be positive")
