@@ -57,7 +57,7 @@ const Home = () => {
               <img
                 src={
                   movie.imageUrl
-                    ? `${import.meta.env.VITE_API_URL}${movie.imageUrl}`
+                    ? `${movie.imageUrl}`
                     : "/icons.svg"
                 }
                 alt={movie.title}
