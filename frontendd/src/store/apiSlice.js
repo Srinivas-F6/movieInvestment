@@ -8,12 +8,9 @@ export const apiSlice = createApi({
 
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
-      console.log(token);
-
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }
-
       return headers;
     },
   }),
@@ -38,11 +35,6 @@ export const apiSlice = createApi({
         method: 'POST',
         body: userData,
       }),
-    }),
-
-    currentUser: builder.query({
-      query: () => '/auth/currentUser',
-      providesTags: ['User'],
     }),
 
     // ================= MOVIES =================
