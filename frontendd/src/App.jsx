@@ -22,6 +22,7 @@ import {UserDashboard} from "./pages/UserDashboard";
 import {MovieSettlement} from "./pages/MovieSettlement";
 import {ProducerGuidelines} from "./pages/ProducerGuidelines";
 import {UserGuidelines} from "./pages/UserGuidelines";
+import {BrowserRouter} from "react-router-dom";
 
 function App() {
 
@@ -33,7 +34,7 @@ function App() {
       }}
       />
 
-      <Router>
+      <BrowserRouter>
 
         <div className="min-h-screen bg-zinc-950 text-white">
 
@@ -119,7 +120,7 @@ function App() {
 
         </div>
 
-      </Router>
+      </BrowserRouter>
     </>
   );
 }
