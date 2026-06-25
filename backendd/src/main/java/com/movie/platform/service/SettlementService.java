@@ -2,7 +2,7 @@ package com.movie.platform.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.movie.platform.dto.InvestorDashboardDTO;
 import com.movie.platform.dto.InvestorMovieSummaryDTO;
-import com.movie.platform.dto.MovieSettlementHistoryDTO;
+
 import com.movie.platform.model.Investment;
 import com.movie.platform.model.InvestmentStage.StageName;
 import com.movie.platform.model.InvestorEarning;

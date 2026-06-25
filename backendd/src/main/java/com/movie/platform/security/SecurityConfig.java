@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/uploads/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -48,8 +49,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-            "http://localhost:5173",
-            "https://movie-investment.vercel.app"
+            "http://localhost:5173"
         ));
 
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));

@@ -35,22 +35,10 @@ public class Movie {
 
     @NotEmpty(message = "Cast required")
     @ElementCollection
-    @CollectionTable(
-        name = "movie_cast",
-        joinColumns = @JoinColumn(name = "movie_id")
-    )
-    @OrderColumn(name = "cast_index")
-    @Column(name = "cast_member")
     private List<String> cast = new ArrayList<>();
 
     @NotEmpty(message = "Crew required")
     @ElementCollection
-    @CollectionTable(
-        name = "movie_crew",
-        joinColumns = @JoinColumn(name = "movie_id")
-    )
-    @OrderColumn(name = "crew_index")
-    @Column(name = "crew_member")
     private List<String> crew = new ArrayList<>();
 
     @NotNull
