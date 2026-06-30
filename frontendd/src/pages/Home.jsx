@@ -9,6 +9,7 @@ const Home = () => {
     isLoading,
     isError,
   } = useGetMoviesQuery();
+  console.log(movies);  
 
   const visibleMovie = movies?.filter((movie) => !movie.hidden);
   const visibleMovies = visibleMovie?.reverse();
@@ -57,7 +58,7 @@ const Home = () => {
               <img
                 src={
                   movie.imageUrl
-                    ? `${movie.imageUrl}`
+                    ? `http://localhost:8080${movie.imageUrl}`
                     : "/icons.svg"
                 }
                 alt={movie.title}

@@ -179,21 +179,10 @@ export function StageDetails() {
                                                         `/invest/${stage.id}/${movie.id}`
                                                     )
                                                 }
-                                                className={`rounded-md px-3 py-1.5 text-xs font-medium text-white transition
-                                            ${stage.status === "COMPLETED" ||
-                                                        stage.status === "HOLD" ||
-                                                        stage.status === "PENDING"
-                                                        ? "cursor-not-allowed bg-zinc-700 opacity-50"
-                                                        : "bg-red-600 hover:bg-red-700"
-                                                    }`}
+                                                className={`rounded-md px-3 py-1.5 text-xs font-medium text-white transition bg-red-600
+                                                      ${stage.status !== "ACTIVE" ? "cursor-not-allowed" : "hover:bg-red-700"}`}
                                             >
-                                                {stage.status === "COMPLETED"
-                                                    ? "Completed"
-                                                    : stage.status === "HOLD"
-                                                        ? "On Hold"
-                                                        : stage.status === "PENDING"
-                                                            ? "Pending"
-                                                            : "Invest"}
+                                                Invest
                                             </button>
 
                                         </td>

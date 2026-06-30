@@ -268,10 +268,10 @@ export function MovieDetails() {
                                                     <td className="px-5 py-3">
 
                                                         <span
-                                                            className={`rounded-full px-3 py-1 text-xs font-bold
-                                                    ${stage.status === "COMPLETED"
+                                                            className={`rounded-full px-2.5 py-1 text-[11px] font-medium
+                                            ${stage.status === "COMPLETED"
                                                                     ? "bg-green-500/20 text-green-400"
-                                                                    : stage.status === "ONGOING"
+                                                                    : stage.status === "ACTIVE"
                                                                         ? "bg-blue-500/20 text-blue-400"
                                                                         : "bg-yellow-500/20 text-yellow-400"
                                                                 }`}
@@ -290,21 +290,14 @@ export function MovieDetails() {
                                                                 stage.status === "PENDING"
                                                             }
                                                             onClick={() =>
-                                                                navigate(`/invest/${stage.id}/${movie.id}`)
+                                                                navigate(
+                                                                    `/invest/${stage.id}/${movie.id}`
+                                                                )
                                                             }
-                                                            className={`rounded-lg px-3 py-1.5 text-sm font-semibold text-white transition
-                                                    ${stage.status === "COMPLETED" ||
-                                                                    stage.status === "HOLD" ||
-                                                                    stage.status === "PENDING"
-                                                                    ? "cursor-not-allowed bg-zinc-700 opacity-50"
-                                                                    : "bg-red-600 hover:bg-red-700"
-                                                                }`}
+                                                            className={`rounded-md px-3 py-1.5 text-xs font-medium text-white transition bg-red-600
+                                                      ${stage.status !== "ACTIVE" ? "cursor-not-allowed" : "hover:bg-red-700"}`}
                                                         >
-                                                            {stage.status === "COMPLETED"
-                                                                ? "Completed"
-                                                                : stage.status === "HOLD"
-                                                                    ? "On Hold"
-                                                                    : "Invest"}
+                                                            Invest
                                                         </button>
 
                                                     </td>

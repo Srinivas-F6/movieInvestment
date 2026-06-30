@@ -10,7 +10,6 @@ import {
     useUpdateUserRoleMutation,
     useDeleteMovieMutation,
     useDeleteStageMutation,
-    useCurrentUserQuery
 } from '../store/apiSlice';
 
 import {
@@ -41,8 +40,6 @@ const AdminDashboard = () => {
         isError,
     } = useGetMoviesQuery();
 
-    const { data: currentUser } = useCurrentUserQuery();
-    console.log(currentUser);
 
     const [updateMovieStatus] = useUpdateMovieStatusMutation();
     const [updateStageStatus] = useUpdateStageStatusMutation();
@@ -526,11 +523,11 @@ const AdminDashboard = () => {
                                                 </td>
 
                                                 <td className="px-4 py-3 text-zinc-300">
-                                                    ${stage.stageAmount}
+                                                    ₹{stage.stageAmount}
                                                 </td>
 
                                                 <td className="px-4 py-3 text-zinc-300">
-                                                    ${stage.collectedAmount}
+                                                    ₹{stage.collectedAmount}
                                                 </td>
 
                                                 <td className="px-4 py-3">

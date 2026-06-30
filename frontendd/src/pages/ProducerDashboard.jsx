@@ -27,7 +27,7 @@ export function ProducerDashboard() {
         }
     );
 
-    console.log("Producer Movies:", producerMovies);
+    console.log(producerMovies);
 
     const totalProfit = producerMovies?.reduce(
         (sum, movie) => sum + Number(movie.profit || 0),
@@ -42,6 +42,9 @@ export function ProducerDashboard() {
     const { data, isLoading, isError } = useGetInvestorDashboardQuery(undefined, {
         refetchOnMountOrArgChange: true,
     });
+
+
+    console.log(data);
 
     if (!token) {
         return <Navigate to="/login" />;
@@ -81,7 +84,7 @@ export function ProducerDashboard() {
                                 </p>
 
                                 <h3 className="mt-2 text-3xl font-bold text-green-400">
-                                    ₹{totalProfit}
+                                    ₹{data?.totalProfit ?? 0}
                                 </h3>
                             </div>
                         </div>
@@ -95,7 +98,7 @@ export function ProducerDashboard() {
                                 </p>
 
                                 <h3 className="mt-2 text-3xl font-bold text-red-400">
-                                    ₹{totalLoss}
+                                    ₹{data?.totalLoss ?? 0}
                                 </h3>
                             </div>
                         </div>
@@ -133,7 +136,7 @@ export function ProducerDashboard() {
                                     >
                                         <td className="py-4 font-medium">
                                             {movie.movieTitle}
-                                        </td>   
+                                        </td>
                                         <td className="py-4">
                                             ₹{movie.totalInvested}
                                         </td>
@@ -251,7 +254,7 @@ export function ProducerDashboard() {
 
                                                 <span
                                                     className={`rounded-full px-2 py-1 text-[8px] font-bold uppercase tracking-wide
-        ${movie.status === "APPROVED"
+                                                             ${movie.status === "APPROVED"
                                                             ? "bg-green-500/15 text-green-400"
                                                             : movie.status === "REJECTED"
                                                                 ? "bg-red-500/15 text-red-400"
@@ -267,7 +270,7 @@ export function ProducerDashboard() {
 
                                                 <div className="flex items-center gap-1 rounded-full bg-red-500/10 px-3 py-1 text-sm font-medium text-red-400">
                                                     <BanknotesIcon className="h-4 w-4" />
-                                                    Budget: ₹{movie.targetFunding}
+                                                   Est. Budget: ₹{movie.targetFunding}
                                                 </div>
 
                                                 <div className="flex items-center gap-1 rounded-full bg-blue-500/10 px-3 py-1 text-sm font-medium text-blue-400">
@@ -277,12 +280,12 @@ export function ProducerDashboard() {
 
                                                 <div className="flex items-center gap-1 rounded-full bg-green-500/10 px-3 py-1 text-sm font-medium text-green-400">
 
-                                                    Profit: ₹{movie.profit}
+                                                    Profit: ₹{movie.profit ?? 0}
                                                 </div>
 
                                                 <div className="flex items-center gap-1 rounded-full bg-red-500/10 px-3 py-1 text-sm font-medium text-red-400">
 
-                                                    Loss: ₹{movie.loss}
+                                                    Loss: ₹{movie.loss ?? 0}
                                                 </div>
 
                                             </div>
@@ -324,6 +327,7 @@ export function ProducerDashboard() {
 
                                             {movie.status === "COMPLETED" && (
                                                 <button
+                                                    
                                                     onClick={() => navigate(`/movie/${movie.id}/settlement`)}
                                                     className="flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-green-700"
                                                 >

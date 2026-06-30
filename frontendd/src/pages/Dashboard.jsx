@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 import {
   useGetInvestmentsForUserQuery,
-  useCreateMovieMutation,
+  useCreateMovieMutation,       
 } from '../store/apiSlice';
 
 import { Navigate } from 'react-router-dom';
@@ -301,7 +301,7 @@ const Dashboard = () => {
               {/* TARGET FUNDING */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-zinc-300">
-                  Target Funding (₹)
+                  Estimated Budget (₹)
                 </label>
 
                 <input
